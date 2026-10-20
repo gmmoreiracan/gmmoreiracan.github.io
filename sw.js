@@ -1,5 +1,5 @@
 'use strict';
-const CACHE_NAME = 'goodday-public-book-v8';
+const CACHE_NAME = 'goodday-public-book-v9';
 const SHELL = [
   './', './index.html', './styles.css', './app.js', './manifest.webmanifest', './favicon.svg',
   './output/pdf/goodday-book.pdf',
@@ -9,7 +9,10 @@ const SHELL = [
   './books/mini-book-assets/redacted/ai-story-draft.png',
   './books/mini-book-assets/redacted/ai-usage-audit.png',
   './books/mini-book-assets/redacted/chore-setup.png',
+  './books/mini-book-assets/redacted/csdm-relationships.png',
   './books/mini-book-assets/redacted/deployment-architecture.png',
+  './books/mini-book-assets/redacted/dim-integration-inventory.png',
+  './books/mini-book-assets/redacted/ea-business-application.png',
   './books/mini-book-assets/redacted/feedback-inbox.png',
   './books/mini-book-assets/redacted/feedback-submission.png',
   './books/mini-book-assets/redacted/goodday-google-signin.png',

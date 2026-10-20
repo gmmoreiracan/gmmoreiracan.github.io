@@ -202,6 +202,10 @@ Those viewpoints should connect without being collapsed into one record. A story
 
 This is why the platform question was interesting to me. The goal was not to put every detail in one database or to make every team use the same screen. It was to let each role work with the evidence it needs, then follow the connections when a question crosses from one role to another.
 
+![Goodday Digital Integration inventory in Enterprise Architecture](./mini-book-assets/redacted/dim-integration-inventory.png)
+
+*The Digital Integrations inventory catalogs provider and subscriber relationships around Goodday. It shows the architecture records and their intended roles, not live request traffic.*
+
 ## 8 Agile stories connect intent to evidence
 
 A useful change begins with a reason. Agile stories gave Goodday a way to carry that reason into implementation, testing, and release work.
@@ -275,6 +279,14 @@ Relationships carry the explanation. A business application can be associated wi
 This model is useful even before it is automated. A logical view helps a team agree on boundaries and ownership. Discovery and reconciliation can add evidence about deployed components, but they should not be used to guess business meaning. Conversely, a polished business architecture view does not prove that every technical dependency is current. A trustworthy model says what kind of evidence each relationship represents.
 
 For Goodday, that meant describing a family product in terms people could understand: coordinate household work, review completion, and manage rewards. Technical services and components support those outcomes, while information domains explain the kinds of data that move through the product. The model stays useful when it lets a household-oriented conversation and an operator-oriented conversation refer to the same service without forcing either person to learn the other's entire vocabulary.
+
+![Goodday Business Application record in Enterprise Architecture](./mini-book-assets/redacted/ea-business-application.png)
+
+*The Business Application view connects Goodday to its business capabilities and digital interfaces.*
+
+![Goodday CSDM and Enterprise Architecture relationships](./mini-book-assets/redacted/csdm-relationships.png)
+
+*The relationship view brings the Business Application, Application Service, interfaces, and supporting components into one model. It is a snapshot of the recorded relationships.*
 
 ## 12 AI systems in business context
 
