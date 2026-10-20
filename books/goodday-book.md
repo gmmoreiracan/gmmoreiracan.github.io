@@ -288,9 +288,17 @@ For Goodday, that meant describing a family product in terms people could unders
 
 *The Business Application view connects Goodday to its business capabilities and digital interfaces.*
 
+![Goodday Business Application service relationships in Enterprise Architecture](./mini-book-assets/servicenow/business-application-service-relationships.png)
+
+*The Service Relationships panel shows the services associated with the Goodday Business Application in this instance snapshot.*
+
 ![Goodday CSDM and Enterprise Architecture relationships](./mini-book-assets/redacted/csdm-relationships.png)
 
 *The relationship view brings the Business Application, Application Service, interfaces, and supporting components into one model. It is a snapshot of the recorded relationships.*
+
+![Unified Goodday service map in Enterprise Architecture](./mini-book-assets/servicenow/unified-ea-service-map.png)
+
+*The unified map links the Business Application and Digital Interfaces to the Application Service, service instances, and supporting runtime components.*
 
 ![Goodday production service topology in CMDB Workspace](./mini-book-assets/redacted/cmdb-workspace-topology.png)
 
