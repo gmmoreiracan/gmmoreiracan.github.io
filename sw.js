@@ -1,5 +1,5 @@
 'use strict';
-const CACHE_NAME = 'goodday-public-book-v11';
+const CACHE_NAME = 'goodday-public-book-v12';
 const SHELL = [
   './', './index.html', './styles.css', './app.js', './manifest.webmanifest', './favicon.svg',
   './output/pdf/goodday-book.pdf',
@@ -30,6 +30,10 @@ const SHELL = [
   './books/mini-book-assets/redacted/reward-request.png',
   './books/mini-book-assets/redacted/system-monitor.png'
 ];
+const NETWORK_FIRST_PATHS = new Set([
+  new URL('./books/goodday-book.md', self.registration.scope).pathname,
+  new URL('./output/pdf/goodday-book.pdf', self.registration.scope).pathname
+]);
 self.addEventListener('install', function (event) {
   event.waitUntil(caches.open(CACHE_NAME).then(function (cache) { return cache.addAll(SHELL); }).then(function () { return self.skipWaiting(); }));
 });
@@ -43,6 +47,19 @@ self.addEventListener('fetch', function (event) {
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
+  if (NETWORK_FIRST_PATHS.has(url.pathname)) {
+    event.respondWith(caches.open(CACHE_NAME).then(function (cache) {
+      return fetch(request, { cache: 'reload' }).then(function (response) {
+        if (response.ok) cache.put(request, response.clone());
+        return response;
+      }).catch(function () {
+        return cache.match(request, { ignoreSearch: true }).then(function (cached) {
+          return cached || new Response('Offline', { status: 504, statusText: 'Offline' });
+        });
+      });
+    }));
+    return;
+  }
   event.respondWith(caches.open(CACHE_NAME).then(function (cache) {
     return cache.match(request).then(function (cached) {
       if (cached) return cached;
