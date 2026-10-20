@@ -152,10 +152,6 @@ As the application grew, it gained familiar sign-in, optional notifications, loc
 
 Goodday's AI capabilities support the chore-to-review-to-reward loop. The chore assistant can draft a change in everyday language. The illustration flow can create a private preview. A feedback workflow can help turn an owner's issue or feature request into a structured story draft.
 
-![Goodday feedback submission form](./mini-book-assets/redacted/feedback-submission.png)
-
-*An owner can submit an issue or feature idea from within the product.*
-
 ![Goodday chore assistant proposal awaiting adult review](./mini-book-assets/redacted/goodday-ai-proposal-redacted.png)
 
 *The assistant stages a proposed chore change for adult review.*
@@ -214,6 +210,10 @@ The work process gave each change a description and acceptance criteria before i
 
 That connection changed the rhythm of small changes. Instead of moving straight from a prompt to code, the work had an explicit purpose and a way to discuss whether it was complete. A feedback inbox gave household owners another path to submit ideas and follow how they became delivery work.
 
+![Goodday feedback submission form](./mini-book-assets/redacted/feedback-submission.png)
+
+*An owner submits a product issue or idea, creating the starting point for a reviewed work item.*
+
 ![Goodday feedback inbox and ServiceNow story links](./mini-book-assets/redacted/feedback-inbox.png)
 
 *The inbox gives an owner a place to review feedback and its related work.*
@@ -256,6 +256,10 @@ The privacy choices matter. The event path can describe service conditions witho
 
 This was one of the clearest examples of the value of a shared platform: a product's own health information can be read alongside the service relationships that explain why it matters.
 
+![Goodday owner-only System Monitor](./mini-book-assets/redacted/system-monitor.png)
+
+*The Goodday monitor gathers app-side health and runtime signals that operators can relate to ServiceNow's service context.*
+
 Signals become easier to act on when each one has a clear owner and lifecycle. A readiness check can say whether the application can serve traffic. A dependency check can identify whether the database is reachable. A request measure can show changing latency or error rates. A queue measure can reveal work that is waiting too long. The event should carry a stable service identity, a bounded category, a timestamp, and enough severity context to route the issue.
 
 An event is not the same as a metric, a log entry, or an alert. Metrics help reveal patterns over time. Logs help an operator investigate a particular execution. Events communicate a condition that may need attention. Alert rules decide whether and how that condition reaches a person. A service map adds dependency context. Keeping those roles distinct prevents a dashboard or a single notification from being mistaken for operational understanding.
@@ -288,6 +292,10 @@ For Goodday, that meant describing a family product in terms people could unders
 
 *The relationship view brings the Business Application, Application Service, interfaces, and supporting components into one model. It is a snapshot of the recorded relationships.*
 
+![Goodday production service topology in CMDB Workspace](./mini-book-assets/redacted/cmdb-workspace-topology.png)
+
+*The CMDB Workspace view connects the production service to its web edge, application runtime, containers, and database. It is a point-in-time view of recorded dependencies.*
+
 ## 12 AI systems in business context
 
 AI governance becomes more practical when an AI system is connected to the business applications and services that use it. Enterprise Architecture and AI Control Tower offer a way to describe that relationship.
@@ -303,6 +311,10 @@ An inventory is most useful when it distinguishes the layers of an AI feature. T
 The association to a business application gives governance a practical starting point: which product uses this AI capability, which people are affected, and what workflow depends on it? A steward can then ask what information is involved, how the output is reviewed, what happens when the provider is unavailable, and how changes to the model or prompt are assessed. These questions connect inventory to product ownership rather than treating it as a list of model names.
 
 Usage evidence needs the same care. A product audit can record that a feature was used, what broad data category was involved, whether the request succeeded, and whether a person reviewed the result. A trace may capture technical execution details for a supported monitoring path. Neither should automatically become a transcript store. Each destination should have a clear purpose, a data allowlist, an owner, and a retention rule.
+
+![Goodday AI usage audit event list](./mini-book-assets/redacted/ai-usage-audit.png)
+
+*The product-side audit records interaction metadata and review outcomes without copying conversation content into the record.*
 
 An MCP server and the external client that calls it should also remain distinct in the model. Goodday can enforce its own user roles, scopes, and tool permissions. It cannot infer what an external client does with data after receiving an authorized response. Governance should therefore record the boundary that the product controls and leave downstream claims to the system's own owner and evidence.
 
@@ -469,10 +481,6 @@ Thinking in information domains helps a team discuss sensitivity and purpose wit
 
 Goodday's AI audit is designed to retain operational context without copying raw prompts or responses. The chore assistant presents suggestions for adult review, and the illustration workflow keeps previews private until approval. These choices keep the AI feature within a human-owned product workflow.
 
-![Goodday AI usage audit event list](./mini-book-assets/redacted/ai-usage-audit.png)
-
-*The audit view emphasizes interaction metadata and review outcomes while keeping conversation content out of the record.*
-
 Useful audit fields include the interaction channel, provider or tool label, outcome, timing, data categories, and whether a person reviewed the result. The record is designed to exclude prompts, model responses, raw tool arguments, and generated image content. That gives an owner a way to see how a feature was used without creating another store of household conversations.
 
 An external MCP client is a separate trust boundary. Goodday can limit the tools and scopes it makes available and record the client's declared processing region. It cannot independently observe the client's downstream provider or prove where the client processes data. A region declaration is useful context for a review, not a substitute for one.
@@ -562,10 +570,6 @@ The habits are deliberately small. A family service does not need a large operat
 | Release review | Connect the request, code change, checks, and human approval so a later operator can follow the change. |
 
 Operational evidence works best as a small set of signals with clear owners. A monitor can summarize response behavior, runtime health, and dependency readiness; a deeper investigation can use protected service logs and recovery records.
-
-![Goodday owner-only System Monitor](./mini-book-assets/redacted/system-monitor.png)
-
-*An owner-facing monitor gathers service health and runtime signals in one view.*
 
 ## Appendix G A review lens for dependable services
 
