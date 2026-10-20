@@ -277,7 +277,9 @@
     el('reader-kicker').textContent = kicker;
     el('reader-page-label').textContent = book.meta.shortLabel;
     el('reader-title').textContent = section.title;
-    el('section-count').textContent = String(activeIndex + 1).padStart(2, '0') + ' / ' + String(book.sections.length).padStart(2, '0');
+    const sectionNumber = String(activeIndex + 1).padStart(2, '0');
+    el('section-count').textContent = 'SECTION ' + sectionNumber + ' OF ' + book.sections.length;
+    el('section-count').setAttribute('aria-label', 'Section ' + (activeIndex + 1) + ' of ' + book.sections.length);
     el('reader-body').innerHTML = renderMarkdown(section.content, book.meta);
     const bookmarks = readSet(activeBookId, 'bookmarks'), saved = bookmarks.has(section.id);
     el('bookmark-button').setAttribute('aria-pressed', String(saved));

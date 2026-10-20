@@ -1,5 +1,5 @@
 'use strict';
-const CACHE_NAME = 'goodday-public-book-v7';
+const CACHE_NAME = 'goodday-public-book-v8';
 const SHELL = [
   './', './index.html', './styles.css', './app.js', './manifest.webmanifest', './favicon.svg',
   './output/pdf/goodday-book.pdf',

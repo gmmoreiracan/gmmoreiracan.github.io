@@ -196,6 +196,12 @@ The important idea was connection. A developer, an application owner, an operati
 
 That made ServiceNow more than a collection of product names in the story. It gave me a way to explore how operational and business context can travel together.
 
+The same application can be described from several useful viewpoints. A product owner cares about the experience and the outcomes it supports. A delivery team needs a clear account of requested changes and the evidence behind them. An operator needs to know whether the service is healthy and which dependency may be involved. An architect needs to see how applications, capabilities, information, and technology relate. An AI steward needs to understand where automated systems participate and where people retain control.
+
+Those viewpoints should connect without being collapsed into one record. A story explains a unit of intended work. A release describes a controlled delivery. A service represents the experience being operated. A configuration item describes a managed component. An AI system record describes a governed use of AI. The relationships between these records create context; their distinct meanings make that context trustworthy.
+
+This is why the platform question was interesting to me. The goal was not to put every detail in one database or to make every team use the same screen. It was to let each role work with the evidence it needs, then follow the connections when a question crosses from one role to another.
+
 ## 8 Agile stories connect intent to evidence
 
 A useful change begins with a reason. Agile stories gave Goodday a way to carry that reason into implementation, testing, and release work.
@@ -214,6 +220,12 @@ That connection changed the rhythm of small changes. Instead of moving straight 
 
 Traceability helps answer simple questions: Why did we make this change? What did we intend? What evidence supports the result? Those records make the work easier for people to understand and maintain.
 
+A useful story is more than a title. It names the person or workflow affected, the behavior that should change, and the observable conditions that would make the change acceptable. For example, a chore-assistant improvement might specify that the assistant can suggest a schedule but cannot alter an approved chore until an adult confirms it. The acceptance notes can then cover both the expected suggestion and the boundary around applying it.
+
+The story can also keep product intent close to technical evidence. A commit describes the implementation; automated checks show what was exercised; a release record connects the change to the service it affects. When a person returns to the work later, those links help reconstruct why a particular implementation exists. They also make a review more specific: the question becomes whether this behavior and its evidence satisfy the request, rather than whether the code merely looks plausible.
+
+AI assistance fits at the beginning of this chain. It can group a report into a concise summary, suggest acceptance criteria, or identify a missing detail. The person who raised the issue can correct the draft, and the product owner decides whether and when it becomes planned work. This keeps the model's contribution legible and preserves prioritization as a human responsibility.
+
 ## 9 Delivery evidence and clear approvals
 
 A release brings several kinds of evidence together: the requested change, the source revision, checks, artifacts, and the approval that allows work to continue. DevOps Change Velocity offered a way to think about those pieces as one delivery story.
@@ -223,6 +235,12 @@ ServiceNow's delivery model connected work, source, checks, and approvals to a r
 The most useful lesson was about clarity. Each handoff should have an owner, a clear state, and evidence that explains what happened. A person should be able to follow the change from the original request to the service it affects.
 
 That is a design principle for agent-assisted delivery as well. An agent can prepare changes and collect evidence, but people need a clear view of what has been proposed, checked, approved, and released.
+
+It helps to treat delivery as a chain of distinct evidence. A source connection identifies where code came from. A build turns that source into an artifact. Tests provide evidence about selected behavior. A release record identifies the thing being promoted. An approval expresses a decision by an authorized person or policy. A deployment record connects the promoted artifact to the running service. Each link answers a different question, so one green indicator should not stand in for the whole chain.
+
+An approval gate is strongest when the person reviewing it can see the scope, the evidence, the expected impact, and the recovery option. A low-risk documentation change may need a lighter review than a database migration or an identity change. The process should make that difference explicit, while still leaving an audit trail that explains who approved what and under which rule.
+
+Agents can help assemble this evidence. They can summarize a change, connect a test result to an acceptance note, and point out when a release record lacks context. They should not turn their own successful execution into permission to deploy. The authority to advance a change belongs to the release policy and the people responsible for it.
 
 ## 10 Event Management makes operations visible
 
@@ -234,6 +252,12 @@ The privacy choices matter. The event path can describe service conditions witho
 
 This was one of the clearest examples of the value of a shared platform: a product's own health information can be read alongside the service relationships that explain why it matters.
 
+Signals become easier to act on when each one has a clear owner and lifecycle. A readiness check can say whether the application can serve traffic. A dependency check can identify whether the database is reachable. A request measure can show changing latency or error rates. A queue measure can reveal work that is waiting too long. The event should carry a stable service identity, a bounded category, a timestamp, and enough severity context to route the issue.
+
+An event is not the same as a metric, a log entry, or an alert. Metrics help reveal patterns over time. Logs help an operator investigate a particular execution. Events communicate a condition that may need attention. Alert rules decide whether and how that condition reaches a person. A service map adds dependency context. Keeping those roles distinct prevents a dashboard or a single notification from being mistaken for operational understanding.
+
+The event also needs a lifecycle. A continuing condition should update the same signal rather than create an unbounded list of duplicates. A recovery sample should close or clear it. The person on call needs to understand what changed and whether the service returned to a healthy state. A privacy-minimized payload makes this easier to do without exporting the household request, model prompt, or image that happened to be present when a failure occurred.
+
 ## 11 CSDM and Enterprise Architecture give the service context
 
 CSDM and Enterprise Architecture helped describe Goodday as a business application supported by services and technical components. The model connected household capabilities such as planning chores, reviewing work, and managing rewards to the application services that deliver them.
@@ -243,6 +267,14 @@ The technical view can then be related to the wider service model. A service mod
 That relationship changes how people can ask questions. A business owner can begin with the household outcome. An operator can follow the service to its application and dependencies. An architect can see how applications, capabilities, and information flows fit together.
 
 The model is most valuable when it helps people understand the same system from different roles. It turns configuration items into context that can support service and business conversations.
+
+The vocabulary matters because these objects have different jobs. A Business Application names a logical product in a portfolio. A Business Capability describes something the business needs to be able to do. An Application Service represents the running service through which people receive the product. Configuration Items represent managed components that support that service. Information Objects describe meaningful data domains without copying a table schema into an architecture view.
+
+Relationships carry the explanation. A business application can be associated with the capabilities it enables and the information it creates or uses. An application service can be related to the business application it delivers. The service can then connect to the components that support its runtime. A relationship should describe a real dependency or lifecycle association, not merely provide a convenient path between two records.
+
+This model is useful even before it is automated. A logical view helps a team agree on boundaries and ownership. Discovery and reconciliation can add evidence about deployed components, but they should not be used to guess business meaning. Conversely, a polished business architecture view does not prove that every technical dependency is current. A trustworthy model says what kind of evidence each relationship represents.
+
+For Goodday, that meant describing a family product in terms people could understand: coordinate household work, review completion, and manage rewards. Technical services and components support those outcomes, while information domains explain the kinds of data that move through the product. The model stays useful when it lets a household-oriented conversation and an operator-oriented conversation refer to the same service without forcing either person to learn the other's entire vocabulary.
 
 ## 12 AI systems in business context
 
@@ -254,6 +286,14 @@ A useful AI inventory should help people understand what a system is for, which 
 
 The project made that connection tangible. AI governance is easier to discuss when it is grounded in an application people can understand and a workflow with visible human decisions.
 
+An inventory is most useful when it distinguishes the layers of an AI feature. The user-facing feature has a purpose and an owner. The AI system describes the governed capability. A model or prompt asset describes a component that may change independently. An inference endpoint describes where requests are processed. An external agent or MCP client is another system, with its own operator and downstream behavior. Treating these as separate but related objects makes it easier to ask who is accountable for each decision.
+
+The association to a business application gives governance a practical starting point: which product uses this AI capability, which people are affected, and what workflow depends on it? A steward can then ask what information is involved, how the output is reviewed, what happens when the provider is unavailable, and how changes to the model or prompt are assessed. These questions connect inventory to product ownership rather than treating it as a list of model names.
+
+Usage evidence needs the same care. A product audit can record that a feature was used, what broad data category was involved, whether the request succeeded, and whether a person reviewed the result. A trace may capture technical execution details for a supported monitoring path. Neither should automatically become a transcript store. Each destination should have a clear purpose, a data allowlist, an owner, and a retention rule.
+
+An MCP server and the external client that calls it should also remain distinct in the model. Goodday can enforce its own user roles, scopes, and tool permissions. It cannot infer what an external client does with data after receiving an authorized response. Governance should therefore record the boundary that the product controls and leave downstream claims to the system's own owner and evidence.
+
 ## 13 Product releases and business value
 
 The product story also needs a business view. For Goodday, the outcome is household coordination: make work clear, give people a way to review it, and connect effort to shared rewards.
@@ -263,6 +303,14 @@ Enterprise Architecture provides a language for relating applications to capabil
 The value of that structure is not a score on a card. It is a better conversation between the people responsible for the product, the service, and the business result. A household app gave me a concrete way to ask how technology choices support the experience a family wants.
 
 Connecting product, release, and business context can help an organization talk about value throughout a service's life, not only at the point of purchase or deployment.
+
+The conversation benefits from precise measures. A capability score is not a business outcome, and a release count is not a measure of customer value. A useful value discussion begins with an outcome people recognize, identifies how the product contributes, and chooses evidence that can actually be observed. For a household product, that might mean clearer assignments, fewer missed reviews, or a reward process that family members understand. For an enterprise service, the equivalent measure depends on its users and business purpose.
+
+Portfolio practices can then connect that outcome to product and technology decisions. Lifecycle information helps teams see which underlying technologies deserve attention. Release planning helps them coordinate the delivery of changes. Architecture connects applications to the capabilities they support. These views provide context for a decision; accountable owners still have to interpret the evidence and decide whether an investment is justified.
+
+An end-to-end example makes the connections concrete. An owner reports that a recurring chore is difficult to assign. A reviewed story captures the user need and the expected behavior. An agent can help draft the change and prepare code. Checks and a build provide evidence about the implementation. An authorized person approves the release. Operational signals show how the service behaves afterward, while the application model connects the product to its capabilities and supporting services. Each step contributes a different kind of confidence, and no single step substitutes for the others.
+
+The value of a joined-up platform is therefore not that it produces an automatic business answer. It helps people see the request, the service, the technology, and the outcome in a shared context so they can make a better-informed decision.
 
 ## Part Three · People and the Agent
 
@@ -402,7 +450,10 @@ Thinking in information domains helps a team discuss sensitivity and purpose wit
 | Rewards | Reward catalogue, cost, request, and decision | Make earning and spending rules understandable to household members. |
 | Illustrations | Approved images and private previews | Keep generated previews private until an adult approves them. |
 | Notifications | Email and browser push subscriptions and delivery preferences | Make optional channels explicit and protect recipient information. |
+| Authentication and external tools | Federated sign-in, household roles, scoped credentials, and approved MCP tools | Keep identity, household authorization, and tool scope distinct. |
 | AI and external tools | Interaction metadata, provider or tool labels, categories, and review outcome | Give owners useful oversight while limiting the content copied into audit records. |
+| Optional location | Coarse location shared after an adult action | Make the purpose explicit, ask before collecting it, and avoid retaining precise coordinates. |
+| Operations | Health checks, aggregate metrics, and incident summaries | Use operational signals to find the affected service without copying household activity into the monitor. |
 
 Goodday's AI audit is designed to retain operational context without copying raw prompts or responses. The chore assistant presents suggestions for adult review, and the illustration workflow keeps previews private until approval. These choices keep the AI feature within a human-owned product workflow.
 
@@ -413,6 +464,22 @@ Goodday's AI audit is designed to retain operational context without copying raw
 Useful audit fields include the interaction channel, provider or tool label, outcome, timing, data categories, and whether a person reviewed the result. The record is designed to exclude prompts, model responses, raw tool arguments, and generated image content. That gives an owner a way to see how a feature was used without creating another store of household conversations.
 
 An external MCP client is a separate trust boundary. Goodday can limit the tools and scopes it makes available and record the client's declared processing region. It cannot independently observe the client's downstream provider or prove where the client processes data. A region declaration is useful context for a review, not a substitute for one.
+
+### What an owner can learn
+
+An audit event can describe who initiated an interaction, which channel handled it, what category of information was involved, how the action ended, and whether a person reviewed the result. This helps an owner compare product behavior without turning the audit table into a transcript archive. It also lets a reviewer distinguish a household-facing assistant from an external tool call or an illustration request.
+
+The audit and the application serve different purposes. The application holds household records and approved images; the audit holds limited context about the use of AI-related features. Database access, backups, exports, and retention policy remain part of the same privacy boundary. A log should support a decision without collecting every input that produced it.
+
+Location is a separate, optional data path. When a household feature needs it, an adult should initiate the request and understand the purpose before granting browser permission. A coarse location category can support a broad contextual feature without keeping an exact coordinate. Any exported audit file or backup should follow the same access and retention choices as the primary record.
+
+| Oversight question | Goodday design principle |
+| --- | --- |
+| Who is accountable? | Keep the household owner and the authorized reviewer visible in the product workflow. |
+| What information is needed? | Send only the context required for the requested task; keep raw conversation content out of the usage audit. |
+| Who can act? | Scope external tools and require an adult to approve changes to household state. |
+| What can be reviewed later? | Preserve action category, outcome, timing, and review context without keeping the full prompt or response. |
+| How long is it retained? | Choose a retention period that fits the purpose and apply it to backups and exports as well. |
 
 ## Appendix E Reading the service model
 
@@ -428,6 +495,21 @@ A service model connects a product's purpose to the systems and decisions that s
 | Operating event | What signal may need an operator's attention? | A privacy-minimized service or dependency health event. |
 
 ServiceNow capabilities fit into this picture in complementary ways. Agile Development 2.0 relates requested work to delivery context. DevOps Change Velocity provides a model for source and test evidence around change. Event Management connects operating signals to services. CSDM and Enterprise Architecture relate applications to capabilities and runtime services. AI Control Tower provides a governance view of AI systems and their business context.
+
+### Keep the layers distinct
+
+| Layer | What it represents | Relationship principle |
+| --- | --- | --- |
+| Business Capability | An ability an organization needs | Describe the outcome people need, not a software component. |
+| Business Application | A logical product used to support work | Relate the product to the capabilities it helps deliver. |
+| Application Service | A running service that delivers the product | Connect the product to the service people depend on. |
+| Configuration Item | A managed runtime or dependency | Relate components to the service they support. |
+| AI System | A governed AI-enabled capability | Link its purpose to the applications that use it, then describe any real runtime separately. |
+| Information Object | A logical category of information | Use categories to discuss impact; do not place household payloads in the architecture catalog. |
+
+These distinctions help keep architecture conversations coherent. A logical product is not the same thing as a deployed runtime. A model inventory is not the same thing as a server inventory. A service relationship explains how components contribute to an outcome; it is not a copy of the application's database structure.
+
+The same idea applies to lifecycle and change records. A story describes intent, a release groups work, a runtime service describes delivery, and an event describes an operating condition. Keeping those roles separate makes it easier to connect them without treating every record as interchangeable.
 
 Those concepts are most useful when their distinctions stay clear. A Business Application describes the product people use. A Business Capability describes an organizational ability. An Application Service describes a running service that delivers the product. Configuration items describe managed components. An AI System describes a governed AI-enabled capability; it is not automatically a server or a service dependency. Separating these views helps an organization ask the right question at each layer.
 
@@ -446,6 +528,18 @@ The product experience depends on more than feature code. These practices connec
 | Recovery | Do people know who can authorize urgent work and how the system returns to its normal approval path? |
 
 These questions help a builder connect product decisions to operations, service context, and human responsibility. They apply whether an application is managed by one person or a larger team.
+
+### A routine operating cycle
+
+| Moment | Practice | Why it matters |
+| --- | --- | --- |
+| Before a release | Review the reason for the change, its checks, and the approval that authorizes it. | The person operating the service can follow the change from intent to result. |
+| During operation | Review service health, runtime pressure, and dependency readiness. | Aggregate signals help an owner find the affected part of the service. |
+| Before recovery is needed | Keep protected backups and a named recovery procedure. | A backup is valuable when an operator can locate and use it. |
+| During a restore drill | Restore in an isolated environment and inspect core application state. | Practice shows whether the recovery steps are understandable and repeatable. |
+| After an incident | Record a useful summary, impact, and outcome without storing household conversations. | Future review can improve the service without widening the data collected. |
+
+The habits are deliberately small. A family service does not need a large operations organization to benefit from clear health signals, protected recovery copies, and an explicit release decision. Those practices make the service easier to explain and support.
 
 | Operating practice | A dependable habit |
 | --- | --- |
@@ -485,6 +579,10 @@ A factor review turns a broad claim such as “ready for production” into ques
 
 The review is most useful when people write down what evidence supports an answer and revisit it after the service changes. An implemented feature, a rehearsed operating procedure, and a proven recovery path are different kinds of evidence. A clear review keeps those distinctions understandable without reducing the service to a grade.
 
+For example, an image-generation change touches more than the model call. A review can ask whether the provider is configured outside the code, whether the job can be retried, how the preview stays private, which adult approves the result, what the audit records, and how an operator understands a failed request. Those questions connect product behavior, infrastructure, authorization, and recovery in one feature-sized discussion.
+
+The review is useful at different scales. A small product can answer a few questions before each release. A larger organization can use the same factor names to compare services, assign owners, and decide what evidence belongs in a portfolio review. The method does not prescribe a score; it helps people state the evidence behind their judgment.
+
 ## Appendix H Feedback to reviewed change
 
 Feedback is a bridge between product use and product work. A household owner can describe a problem or idea in the app. An AI-assisted workflow can organize that report into a structured story draft, while a deterministic template remains available when model assistance is unavailable or the result fails validation.
@@ -501,6 +599,15 @@ The workflow has four deliberate steps: capture the request, prepare a draft, va
 The workflow still belongs to people. A draft is a starting point: the owner can correct it, decide whether it reflects the request, and choose what should enter the work queue. Keeping the draft visibly separate from an approved story prevents a helpful suggestion from becoming an unreviewed commitment.
 
 This pattern applies beyond Goodday. AI can reduce the effort of shaping an idea for a delivery process while leaving prioritization, acceptance, and release authority with the people responsible for the product.
+
+| Responsibility | Assistant can help with | Person remains responsible for |
+| --- | --- | --- |
+| Understand the request | Group related details and suggest a concise summary | Confirming what the owner meant and what outcome matters |
+| Prepare the story | Drafting a title, context, and acceptance notes | Editing the language and choosing the actual acceptance criteria |
+| Check the result | Validating structure and flagging missing fields | Deciding whether the request belongs in the backlog |
+| Move work forward | Linking a reviewed request to the delivery process | Prioritizing, approving, and accepting the change |
+
+The fallback path matters because it keeps the product usable when model assistance is unavailable. It also makes the authority boundary clear: the model can prepare a candidate record, while the person decides whether that record becomes work.
 
 ## Appendix I Operational signals without household content
 
@@ -520,6 +627,17 @@ The principle is simple: collect enough context to guide an operator toward the 
 | AI and tool outcomes | Aggregate success, denial, review, and failure counts | Prompts, responses, images, raw tool arguments, and external-client secrets |
 
 An operational signal should help answer “what needs attention?” and “which service is affected?” It should not become a second channel for collecting the information the application is designed to protect.
+
+### A signal's lifecycle
+
+1. Measure a bounded service or dependency condition.
+2. Normalize the signal to a stable service identity and useful category.
+3. Send an aggregate event with enough context to route it to the right operator.
+4. Update the same event as the condition continues or changes.
+5. Close it when healthy behavior returns.
+6. Review the outcome without attaching household content to the event.
+
+This sequence keeps operations connected to the service model while preserving a clear boundary between telemetry and the private records that make the product useful.
 
 ## Sources and further reading
 
