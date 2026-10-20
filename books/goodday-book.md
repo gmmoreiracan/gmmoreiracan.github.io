@@ -222,6 +222,10 @@ That connection changed the rhythm of small changes. Instead of moving straight 
 
 *An AI-assisted draft can organize feedback for a person to review before it enters delivery.*
 
+![Goodday story record in Agile Development 2.0](./mini-book-assets/servicenow/agile-story-redacted.png)
+
+*The Agile Development 2.0 story links a change to its product, release, epic, sprint, and acceptance criteria.*
+
 Traceability helps answer simple questions: Why did we make this change? What did we intend? What evidence supports the result? Those records make the work easier for people to understand and maintain.
 
 A useful story is more than a title. It names the person or workflow affected, the behavior that should change, and the observable conditions that would make the change acceptable. For example, a chore-assistant improvement might specify that the assistant can suggest a schedule but cannot alter an approved chore until an adult confirms it. The acceptance notes can then cover both the expected suggestion and the boundary around applying it.
@@ -235,6 +239,14 @@ AI assistance fits at the beginning of this chain. It can group a report into a 
 A release brings several kinds of evidence together: the requested change, the source revision, checks, artifacts, and the approval that allows work to continue. DevOps Change Velocity offered a way to think about those pieces as one delivery story.
 
 ServiceNow's delivery model connected work, source, checks, and approvals to a release path. Considering Goodday through this lens showed how a change can be discussed as a sequence of named evidence, rather than one green light.
+
+![Goodday DevOps story for test and deployment evidence](./mini-book-assets/servicenow/dvc-evidence-story.png)
+
+*The DevOps story defines the evidence expected for a release and keeps production deployment behind an approved change. This is a draft requirement record, not a deployment report.*
+
+![Goodday Local Reporter pipeline history in DevOps Change Workspace](./mini-book-assets/servicenow/dvc-pipeline-redacted.png)
+
+*The pipeline view brings build checks, automated tests, artifacts, commits, and results into one delivery path. This is a point-in-time view of run 20 in progress, alongside earlier runs with passing and failing results.*
 
 The most useful lesson was about clarity. Each handoff should have an owner, a clear state, and evidence that explains what happened. A person should be able to follow the change from the original request to the service it affects.
 
@@ -259,6 +271,10 @@ This was one of the clearest examples of the value of a shared platform: a produ
 ![Goodday owner-only System Monitor](./mini-book-assets/redacted/system-monitor.png)
 
 *The Goodday monitor gathers app-side health and runtime signals that operators can relate to ServiceNow's service context.*
+
+![Goodday telemetry alert in Service Operations Workspace](./mini-book-assets/servicenow/event-alert-redacted.png)
+
+*This historical alert record connects a Goodday telemetry warning to impacted services and an operations group. Its severity reflects the captured moment, not current service health.*
 
 Signals become easier to act on when each one has a clear owner and lifecycle. A readiness check can say whether the application can serve traffic. A dependency check can identify whether the database is reachable. A request measure can show changing latency or error rates. A queue measure can reveal work that is waiting too long. The event should carry a stable service identity, a bounded category, a timestamp, and enough severity context to route the issue.
 
@@ -307,6 +323,10 @@ For Goodday, that meant describing a family product in terms people could unders
 ## 12 AI systems in business context
 
 AI governance becomes more practical when an AI system is connected to the business applications and services that use it. Enterprise Architecture and AI Control Tower offer a way to describe that relationship.
+
+![Goodday Chore Assistant record in AI Control Tower](./mini-book-assets/servicenow/aict-asset-redacted.png)
+
+*The AI Control Tower record makes the assistant's intended use, human involvement, data categories, related model and prompt, and business application visible in one view.*
 
 Goodday helped me think about several kinds of AI use: a chore assistant, an illustration workflow, and a feedback story drafter. Each has a different purpose, interaction pattern, and place in the product. The assistant supports a household decision; the illustration workflow creates a private preview; the feedback drafter helps turn a suggestion into work for the product team.
 
@@ -371,6 +391,10 @@ This principle applies beyond software release. Any workflow in which an agent c
 AI agents changed the range of work I could explore as one builder. They helped across the interface, backend, tests, migrations, documentation, and integrations. That made it possible to connect product decisions with the technical and operational questions around them.
 
 The most useful shift was not simply generating code faster. It was being able to keep a broader view of the product while exploring one concrete change at a time. An agent could help inspect a feature, suggest an implementation, update the related documentation, and prepare evidence for review.
+
+![Agent request framed around capturing deployment traces](./mini-book-assets/redacted/agent-trace-request.png)
+
+*A trace-capture request makes the desired evidence explicit; the application scope and release boundary still need to be clear.*
 
 Clear tasks made the collaboration more effective. A useful request described the affected area, the expected behavior, the constraints, and how a person would judge the result. The agent could then contribute within a boundary that remained visible to the builder.
 

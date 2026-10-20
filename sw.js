@@ -1,15 +1,21 @@
 'use strict';
-const CACHE_NAME = 'goodday-public-book-v12';
+const CACHE_NAME = 'goodday-public-book-v13';
 const SHELL = [
   './', './index.html', './styles.css', './app.js', './manifest.webmanifest', './favicon.svg',
   './output/pdf/goodday-book.pdf',
   './books/goodday-book.md',
   './books/mini-book-assets/goodday-sign-in-crop.png',
   './books/mini-book-assets/servicenow/business-application-service-relationships.png',
+  './books/mini-book-assets/servicenow/aict-asset-redacted.png',
+  './books/mini-book-assets/servicenow/agile-story-redacted.png',
+  './books/mini-book-assets/servicenow/dvc-evidence-story.png',
+  './books/mini-book-assets/servicenow/dvc-pipeline-redacted.png',
+  './books/mini-book-assets/servicenow/event-alert-redacted.png',
   './books/mini-book-assets/servicenow/unified-ea-service-map.png',
   './books/mini-book-assets/redacted/adult-completion-review.png',
   './books/mini-book-assets/redacted/ai-story-draft.png',
   './books/mini-book-assets/redacted/ai-usage-audit.png',
+  './books/mini-book-assets/redacted/agent-trace-request.png',
   './books/mini-book-assets/redacted/chore-setup.png',
   './books/mini-book-assets/redacted/csdm-relationships.png',
   './books/mini-book-assets/redacted/cmdb-workspace-topology.png',
