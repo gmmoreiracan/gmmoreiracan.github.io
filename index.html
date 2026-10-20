@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f1e9">
+  <meta name="description" content="An interactive book about building Goodday with AI agents, connecting product and service design, and keeping human judgment in the loop.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <title>Building Goodday — From a family app to a connected service</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to the book</a>
+
+  <header class="site-header">
+    <a class="wordmark" href="#top" aria-label="Goodday Field Notes home">
+      <span class="wordmark-seal" aria-hidden="true">g.</span>
+      <span class="wordmark-copy"><strong>GOODDAY</strong><small>FIELD NOTES</small></span>
+    </a>
+    <nav class="top-nav" aria-label="Main navigation">
+      <button class="nav-link is-current" type="button" data-view="read">Read</button>
+      <button class="nav-link" type="button" data-view="timeline">Chronology</button>
+      <button class="nav-link" type="button" data-view="gallery">Figures</button>
+      <button class="nav-link" type="button" data-view="glossary">Glossary</button>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-button search-trigger" type="button" id="search-open" aria-label="Search the book" title="Search the book (/)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.7"></circle><path d="m16 16 4.8 4.8"></path></svg>
+        <span>Search</span>
+      </button>
+      <button class="icon-button" type="button" id="theme-toggle" aria-label="Switch color theme" title="Switch color theme">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 15.4A8.5 8.5 0 0 1 8.6 3.6 8.7 8.7 0 1 0 20.4 15.4Z"></path><path d="M15.7 3.2v4.2M13.6 5.3h4.2"></path></svg>
+      </button>
+      <button class="menu-button" type="button" id="menu-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open navigation">
+        <span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" hidden>
+    <button type="button" data-view="read">Read the book</button>
+    <button type="button" data-view="timeline">The journey</button>
+    <button type="button" data-view="gallery">Figures</button>
+    <button type="button" data-view="glossary">Glossary</button>
+    <button type="button" id="mobile-search-open">Search the book</button>
+  </nav>
+
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-rule"></span> A builder's story</p>
+        <h1 id="hero-title">Building Goodday<br><em>with AI agents</em></h1>
+        <p class="hero-deck">A family chores app became a field study in software delivery, service governance, and the human approval gate that still matters.</p>
+        <div class="hero-actions">
+          <button class="button button-light" type="button" data-open-book="field-account">
+            Start reading <span aria-hidden="true">↗</span>
+          </button>
+          <button class="text-button hero-secondary" type="button" data-view="timeline">Follow the chronology <span aria-hidden="true">↓</span></button>
+        </div>
+        <div class="hero-meta">
+          <span><strong id="chapter-count">18</strong> chapters</span><i aria-hidden="true"></i>
+          <span><strong id="guide-count">9</strong> field guides</span><i aria-hidden="true"></i>
+          <span>One consolidated edition</span>
+        </div>
+      </div>
+
+      <div class="hero-art" aria-label="The story moves from household app to connected service">
+        <div class="art-topline"><span>THE BUILDING JOURNEY</span><span>01 — 03</span></div>
+        <div class="story-path" aria-hidden="true">
+          <span class="path-line"></span>
+          <div class="path-node node-home">
+            <span class="node-icon"><svg viewBox="0 0 32 32"><path d="m4 15 12-10 12 10M8 13v14h16V13M13 27v-8h6v8"></path></svg></span>
+            <small>01 / THE PRODUCT</small>
+            <strong>A household<br>problem</strong>
+          </div>
+          <div class="path-node node-agent">
+            <span class="node-icon"><svg viewBox="0 0 32 32"><path d="M16 4v4M7 9l3 3m15-3-3 3M5 18h4m14 0h4M9 27l3-4m11 4-3-4"></path><circle cx="16" cy="17" r="8"></circle><circle cx="13" cy="16" r=".8" class="eye"></circle><circle cx="19" cy="16" r=".8" class="eye"></circle><path d="M13 20q3 2 6 0"></path></svg></span>
+            <small>02 / THE WORKFLOW</small>
+            <strong>Agents with<br>clear boundaries</strong>
+          </div>
+          <div class="path-node node-service">
+            <span class="node-icon"><svg viewBox="0 0 32 32"><rect x="5" y="5" width="22" height="8" rx="2"></rect><rect x="5" y="19" width="22" height="8" rx="2"></rect><path d="M10 9h.1M10 23h.1M16 13v6"></path></svg></span>
+            <small>03 / THE SERVICE</small>
+            <strong>Operations in<br>business context</strong>
+          </div>
+        </div>
+        <div class="art-caption"><span>From a working MVP</span><b>→</b><span>to a clear service context</span></div>
+        <div class="art-index">GOODDAY<br>2026</div>
+      </div>
+      <div class="hero-footnote"><span>01</span><span>THE STORY STARTS SMALL</span><span>SCROLL TO EXPLORE</span><span aria-hidden="true">⌄</span></div>
+    </section>
+
+    <section class="edition-shelf section-wrap" id="editions" aria-labelledby="editions-title">
+      <div class="section-intro">
+        <p class="eyebrow">THE STORY ARC</p>
+        <h2 id="editions-title">One book.<br>Three movements.</h2>
+        <p>A family product grows into a connected service, then becomes a practical lesson in human and agent collaboration.</p>
+      </div>
+      <div class="edition-grid">
+        <article class="edition-card edition-primary">
+          <span class="edition-label"><span class="edition-dot"></span> 01 · THE PRODUCT</span>
+          <span class="edition-title">Start with a<br>household need</span>
+          <span class="edition-description">A clear chore, review, and reward loop gives the story its human center.</span>
+        </article>
+        <article class="edition-card edition-secondary">
+          <span class="edition-label"><span class="edition-dot"></span> 02 · THE SERVICE</span>
+          <span class="edition-title">Connect the<br>system around it</span>
+          <span class="edition-description">Identity, operations, architecture, and delivery bring the application into context.</span>
+        </article>
+        <article class="edition-card edition-secondary">
+          <span class="edition-label"><span class="edition-dot"></span> 03 · THE PEOPLE</span>
+          <span class="edition-title">Keep judgment<br>with people</span>
+          <span class="edition-description">AI can help prepare work while people own approval, outcomes, and authority.</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="workbench-wrap" id="workbench" aria-label="Interactive book workspace">
+      <div class="workbench-head">
+        <div>
+          <p class="eyebrow">THE READING ROOM</p>
+          <h2>Read the story.<br><em>Follow the design choices.</em></h2>
+        </div>
+        <div class="workbench-tools">
+          <span class="edition-indicator" id="edition-indicator"><span class="edition-dot"></span><span>Loading the book…</span></span>
+          <button class="subtle-button" type="button" id="resume-button" hidden>Resume reading <span aria-hidden="true">↗</span></button>
+        </div>
+      </div>
+      <div class="view-tabs" role="tablist" aria-label="Explore the book">
+        <button class="view-tab is-current" type="button" role="tab" aria-selected="true" data-view="read"><span>01</span> Read</button>
+        <button class="view-tab" type="button" role="tab" aria-selected="false" data-view="timeline"><span>02</span> Chronology</button>
+        <button class="view-tab" type="button" role="tab" aria-selected="false" data-view="gallery"><span>03</span> Figures</button>
+        <button class="view-tab" type="button" role="tab" aria-selected="false" data-view="glossary"><span>04</span> Glossary</button>
+        <button class="view-tab" type="button" role="tab" aria-selected="false" data-view="sources"><span>05</span> About this book</button>
+      </div>
+
+      <section class="work-panel is-active" id="panel-read" data-panel="read" role="tabpanel" aria-label="Book reader">
+        <div class="reader-layout">
+          <aside class="reader-rail" aria-label="Contents and reading progress">
+            <div class="rail-topline"><span>CONTENTS</span><button class="rail-filter-button" type="button" id="clear-chapter-filter" aria-label="Clear chapter filter" title="Clear chapter filter">×</button></div>
+            <label class="chapter-filter-wrap">
+              <span class="sr-only">Filter chapters</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.7"></circle><path d="m16 16 4.8 4.8"></path></svg>
+              <input id="chapter-filter" type="search" placeholder="Find a chapter" autocomplete="off">
+            </label>
+            <nav id="table-of-contents" class="toc-list" aria-label="Book chapters"></nav>
+            <div class="rail-progress">
+              <div class="progress-label"><span>YOUR PROGRESS</span><span id="progress-percent">0%</span></div>
+              <div class="progress-track" role="progressbar" aria-label="Reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-bar"><span></span></div>
+              <p id="progress-copy">Choose a chapter to begin.</p>
+            </div>
+          </aside>
+          <article class="reader" id="reader-article">
+            <div class="reader-toolbar">
+              <div class="reader-kicker" id="reader-kicker">CHAPTER —</div>
+              <div class="reader-controls">
+                <button class="reader-tool" type="button" id="bookmark-button" aria-pressed="false" title="Save this section">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4.8A1.8 1.8 0 0 1 7.8 3h8.4A1.8 1.8 0 0 1 18 4.8V21l-6-3.8L6 21z"></path></svg><span>Save</span>
+                </button>
+                <button class="reader-tool" type="button" id="share-button" title="Copy a link to this section">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13.8a4.2 4.2 0 0 0 6.2.4l3-3a4.2 4.2 0 0 0-5.9-6l-1.7 1.7"></path><path d="M14 10.2a4.2 4.2 0 0 0-6.2-.4l-3 3a4.2 4.2 0 0 0 5.9 6l1.7-1.7"></path></svg><span>Share</span>
+                </button>
+                <span class="toolbar-divider" aria-hidden="true"></span>
+                <button class="reader-tool compact-tool" type="button" id="font-smaller" aria-label="Decrease text size" title="Decrease text size">A−</button>
+                <button class="reader-tool compact-tool" type="button" id="font-larger" aria-label="Increase text size" title="Increase text size">A+</button>
+                <a class="reader-tool compact-tool" id="download-book-top" href="./output/pdf/goodday-book.pdf" download="building-goodday.pdf" aria-label="Download the full book as PDF" title="Download the full book as PDF">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 18v3h16v-3"></path></svg>
+                </a>
+              </div>
+            </div>
+            <div class="reader-heading-row">
+              <div><p class="reader-page-label" id="reader-page-label">THE FIELD ACCOUNT</p><h1 id="reader-title">Loading the manuscript…</h1></div>
+              <span class="section-count" id="section-count"></span>
+            </div>
+            <div class="reader-body" id="reader-body" aria-live="polite"></div>
+            <div class="reader-endmatter">
+              <button class="mark-read-button" type="button" id="mark-read-button" aria-pressed="false"><span class="read-check" aria-hidden="true">✓</span><span>Mark section as read</span></button>
+              <div class="chapter-pager">
+                <button class="pager-button pager-prev" type="button" id="previous-section"><span aria-hidden="true">←</span><span><small>PREVIOUS</small><strong>—</strong></span></button>
+                <button class="pager-button pager-next" type="button" id="next-section"><span><small>NEXT</small><strong>—</strong></span><span aria-hidden="true">→</span></button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="work-panel" id="panel-timeline" data-panel="timeline" role="tabpanel" aria-label="Story chronology" hidden>
+        <div class="explore-panel-header">
+          <div><p class="eyebrow">THE JOURNEY AT A GLANCE</p><h3>From household app<br>to connected service.</h3></div>
+          <div class="panel-note"><span class="note-mark">i</span><p>Six movements follow the product from an everyday household need to a service shaped around people and AI.</p></div>
+        </div>
+        <div class="timeline-filters">
+          <label class="select-label">SHOW THE STORY
+            <select id="timeline-filter"><option value="all">All movements</option></select>
+          </label>
+          <span id="timeline-count" class="result-count"></span>
+        </div>
+        <div class="timeline-list" id="timeline-list"></div>
+      </section>
+
+      <section class="work-panel" id="panel-gallery" data-panel="gallery" role="tabpanel" aria-label="Book figures" hidden>
+        <div class="explore-panel-header">
+          <div><p class="eyebrow">SELECTED APP ILLUSTRATIONS</p><h3>See the product in use.</h3></div>
+          <div class="panel-note"><span class="note-mark">↗</span><p>Three selected Goodday app screens. Select an image to inspect it and read its caption.</p></div>
+        </div>
+        <div class="gallery-grid" id="gallery-grid"></div>
+      </section>
+
+      <section class="work-panel" id="panel-glossary" data-panel="glossary" role="tabpanel" aria-label="Glossary" hidden>
+        <div class="explore-panel-header">
+          <div><p class="eyebrow">A WORKING GLOSSARY</p><h3>Words for the<br><em>system behind the story.</em></h3></div>
+          <div class="panel-note"><span class="note-mark">Aa</span><p>Definitions are drawn from the book's field guide. Search a term or browse the complete list.</p></div>
+        </div>
+        <div class="glossary-tools">
+          <label class="search-field-wrap"><span class="sr-only">Search glossary terms</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.7"></circle><path d="m16 16 4.8 4.8"></path></svg><input type="search" id="glossary-search" placeholder="Search terms like CSDM or IRE"></label>
+          <span id="glossary-count" class="result-count"></span>
+        </div>
+        <div class="glossary-grid" id="glossary-grid"></div>
+      </section>
+
+      <section class="work-panel" id="panel-sources" data-panel="sources" role="tabpanel" aria-label="About this book" hidden>
+        <div class="explore-panel-header">
+          <div><p class="eyebrow">ABOUT THIS BOOK</p><h3>One continuous<br>Goodday story.</h3></div>
+          <div class="panel-note"><span class="note-mark">i</span><p>A single narrative brings together the product journey, service design, and human approval boundaries.</p></div>
+        </div>
+        <div class="source-cards" id="source-cards"></div>
+        <div class="pdf-download">
+          <a class="button button-dark" id="download-book" href="./output/pdf/goodday-book.pdf" download="building-goodday.pdf">Download book as PDF <span aria-hidden="true">↓</span></a>
+          <p>Downloads the complete, illustrated edition.</p>
+        </div>
+        <div class="scope-content" id="scope-content"></div>
+      </section>
+    </section>
+
+    <section class="closing-note section-wrap" aria-labelledby="closing-title">
+      <div class="closing-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div>
+        <p class="eyebrow">A NOTE ON THE PROJECT</p>
+        <h2 id="closing-title">A practical story<br>about building with AI.</h2>
+        <p>Goodday makes a larger idea concrete: AI can help build software while people define what is useful, safe, and ready.</p>
+      </div>
+      <button class="button button-dark" type="button" data-open-book="field-account">Return to the book <span aria-hidden="true">↗</span></button>
+    </section>
+  </main>
+
+  <div class="print-book" id="print-book" aria-hidden="true"></div>
+
+  <footer class="site-footer">
+    <a class="wordmark footer-wordmark" href="#top"><span class="wordmark-seal" aria-hidden="true">g.</span><span class="wordmark-copy"><strong>GOODDAY</strong><small>FIELD NOTES</small></span></a>
+    <p>A consolidated public account. Reading position and bookmarks stay in this browser.</p>
+    <button type="button" class="footer-help" id="help-open">Keyboard guide <span aria-hidden="true">⌘</span></button>
+    <span class="footer-date">2026 · AN INTERACTIVE BOOK</span>
+  </footer>
+
+  <dialog class="search-dialog" id="search-dialog" aria-labelledby="search-title">
+    <div class="dialog-topline"><div><p class="eyebrow">SEARCH THE BOOK</p><h2 id="search-title">Find a passage</h2></div><button type="button" class="dialog-close" data-close-dialog="search-dialog" aria-label="Close search">×</button></div>
+    <label class="global-search-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.7"></circle><path d="m16 16 4.8 4.8"></path></svg><span class="sr-only">Search the book</span><input id="global-search" type="search" placeholder="Try “approval gate” or “human review”" autocomplete="off"></label>
+    <p class="search-caption">Search the book. Press <kbd>Esc</kbd> to close.</p>
+    <div class="search-results" id="search-results" aria-live="polite"><p class="empty-search">Enter a word or phrase to begin.</p></div>
+  </dialog>
+
+  <dialog class="image-dialog" id="image-dialog" aria-label="Figure viewer">
+    <button type="button" class="dialog-close image-close" data-close-dialog="image-dialog" aria-label="Close image viewer">×</button>
+    <button type="button" class="image-step image-step-prev" id="image-previous" aria-label="Previous figure">←</button>
+    <figure class="lightbox-figure"><img id="lightbox-image" alt=""><figcaption id="lightbox-caption"></figcaption></figure>
+    <button type="button" class="image-step image-step-next" id="image-next" aria-label="Next figure">→</button>
+    <div class="lightbox-index" id="lightbox-index"></div>
+  </dialog>
+
+  <dialog class="help-dialog" id="help-dialog" aria-labelledby="help-title">
+    <div class="dialog-topline"><div><p class="eyebrow">QUICK CONTROLS</p><h2 id="help-title">Keyboard guide</h2></div><button type="button" class="dialog-close" data-close-dialog="help-dialog" aria-label="Close keyboard guide">×</button></div>
+    <dl class="shortcut-list">
+      <div><dt><kbd>/</kbd></dt><dd>Search the book</dd></div>
+      <div><dt><kbd>←</kbd> <kbd>→</kbd></dt><dd>Move between sections while reading</dd></div>
+      <div><dt><kbd>B</kbd></dt><dd>Bookmark the current section</dd></div>
+      <div><dt><kbd>?</kbd></dt><dd>Open this guide</dd></div>
+      <div><dt><kbd>Esc</kbd></dt><dd>Close a dialog</dd></div>
+    </dl>
+  </dialog>
+  <noscript><p class="noscript-note">This interactive reader needs JavaScript to prepare the book for reading and PDF export.</p></noscript>
+</body>
+</html>
