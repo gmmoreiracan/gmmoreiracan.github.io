@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f1e9">
+  <meta name="description" content="Explore Goodday's static service architecture map: filter, move records, and follow the relationships around the family chores application.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <title>The System Behind the Story · Goodday</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./service-map-page.js" defer></script>
+  <script src="./csdm-map.js" defer></script>
+</head>
+<body class="standalone-map-page">
+  <a class="skip-link" href="#standalone-main">Skip to the map</a>
+  <header class="standalone-map-header">
+    <a class="wordmark" href="./index.html?book=field-account&amp;section=field-account-interlude-the-system-behind-the-story#read" aria-label="Goodday Field Notes — return to the book">
+      <span class="wordmark-seal" aria-hidden="true">g.</span>
+      <span class="wordmark-copy"><strong>GOODDAY</strong><small>FIELD NOTES</small></span>
+    </a>
+    <div class="standalone-map-actions">
+      <a class="standalone-back-link" href="./index.html?book=field-account&amp;section=field-account-interlude-the-system-behind-the-story#read">Back to the story <span aria-hidden="true">↗</span></a>
+      <button class="icon-button" type="button" id="standalone-theme-toggle" aria-label="Switch color theme" title="Switch color theme">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 15.4A8.5 8.5 0 0 1 8.6 3.6 8.7 8.7 0 1 0 20.4 15.4Z"></path><path d="M15.7 3.2v4.2M13.6 5.3h4.2"></path></svg>
+      </button>
+    </div>
+  </header>
+  <main class="standalone-map-main" id="standalone-main">
+    <div class="standalone-map-intro">
+      <p class="eyebrow"><span class="eyebrow-rule"></span> THE SYSTEM BEHIND THE STORY</p>
+      <h1>Goodday’s connected service</h1>
+      <p>Explore the same static snapshot from the book on a full page. Filter it, expand a domain, and move record cards into a layout that makes sense to you.</p>
+    </div>
+    <div class="csdm-map-mount" data-csdm-map-mount>
+      <p class="csdm-map-static-note">Loading the static relationship map…</p>
+    </div>
+    <p class="standalone-map-footnote">This page reads the checked-in JSON snapshot only. It does not make live ServiceNow requests.</p>
+  </main>
+</body>
+</html>

@@ -130,7 +130,7 @@
   }
   function shellMarkup() {
     return '<div class="csdm-map-app" data-map-app>' +
-      '<div class="map-heading-row"><div><p class="map-eyebrow">A STATIC COMMON SERVICE DATA MODEL SNAPSHOT · GOODDAY FAMILY CHORES</p><h3>Explore the relationships.</h3><p class="map-deck">Filter by product or service-model domain, open a group to reveal its records, then drag cards to arrange the diagram. Connectors route around nearby records.</p></div><span class="map-snapshot-pill" data-map-snapshot>Snapshot</span></div>' +
+      '<div class="map-heading-row"><div><p class="map-eyebrow">A STATIC COMMON SERVICE DATA MODEL SNAPSHOT · GOODDAY FAMILY CHORES</p><h3>Explore the relationships.</h3><p class="map-deck">Filter by product or service-model domain, open a group to reveal its records, then drag cards to arrange the diagram. Connectors route around nearby records.</p></div><div class="map-heading-actions"><a class="map-open-standalone" href="./service-map.html" target="_blank" rel="noopener">Open in its own page <span aria-hidden="true">↗</span></a><span class="map-snapshot-pill" data-map-snapshot>Snapshot</span></div></div>' +
       '<div class="map-toolbar"><label class="map-search"><span class="sr-only">Search map records and supporting details</span><span aria-hidden="true">⌕</span><input type="search" data-map-search placeholder="Search records and details" autocomplete="off" aria-controls="map-search-results"><button type="button" class="map-clear-search" data-map-clear aria-label="Clear map search" hidden>×</button></label><div class="map-search-results" data-map-search-results id="map-search-results" aria-live="polite"></div><div class="map-view-count" data-map-count role="status" aria-live="polite"></div><div class="map-toolbar-actions"><button class="map-filter-open" type="button" data-filter-open aria-expanded="false" aria-controls="map-filters">Filters</button><button type="button" class="map-action-button" data-expand-all aria-pressed="false">Expand all groups</button><button type="button" class="map-action-button" data-auto-layout title="Restore the automatic diagram layout">Auto arrange</button><button type="button" class="map-action-button map-reset" data-reset>Reset view</button></div></div>' +
       '<div class="map-layout"><button class="map-scrim" data-map-scrim aria-label="Close filters" hidden></button>' +
       '<aside class="map-filters" id="map-filters" data-map-filters aria-label="Map filters" aria-hidden="true" inert><div class="map-panel-head"><div><p class="map-eyebrow">TUNE THE VIEW</p><h4>Filters</h4></div><button type="button" class="map-panel-close" data-filter-close aria-label="Close map filters">×</button></div>' +
@@ -139,7 +139,7 @@
       '<label class="map-check-row"><input type="checkbox" data-context><span><strong>Show connected context</strong><small>Include directly connected records outside the selected filters.</small></span></label>' +
       '<label class="map-check-row"><input type="checkbox" data-labels><span><strong>Relationship labels</strong><small>Show labels and counts on directed edges.</small></span></label>' +
       '<div class="map-legend"><p class="map-field-label">NODE LEGEND</p><div class="map-legend-grid" data-legend></div><p class="map-legend-domain"><i></i> Service Delivery domain</p></div>' +
-      '</aside><section class="map-stage" aria-label="Interactive architecture diagram"><div class="map-canvas-topline"><span><i class="map-live-dot"></i> SERVICE RELATIONSHIP MAP</span><span data-map-layer-hint>Collapsed overview · select a domain to expand</span></div><div class="map-viewport" data-map-viewport tabindex="0" role="group" aria-label="Interactive architecture map. Drag record boxes to move them, drag open space to pan, and use the controls to zoom and fit."><svg class="map-svg" data-map-svg role="group" aria-label="Goodday service architecture diagram"><defs><marker id="csdm-arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z"></path></marker></defs><g data-edges></g><g data-nodes></g></svg></div><div class="map-zoom-bar"><span>Drag cards to move · drag space to pan · Shift + arrows to nudge</span><div><button type="button" data-zoom-out aria-label="Zoom out">−</button><button type="button" data-zoom-in aria-label="Zoom in">+</button><button type="button" data-fit>Fit to view</button></div></div></section>' +
+      '</aside><section class="map-stage" aria-label="Interactive architecture diagram"><div class="map-canvas-topline"><span><i class="map-live-dot"></i> SERVICE RELATIONSHIP MAP</span><span data-map-layer-hint>Collapsed overview · select a domain to expand</span></div><div class="map-viewport" data-map-viewport tabindex="0" role="group" aria-label="Interactive architecture map. Drag record boxes to move them, drag open space to pan, and use the controls to zoom and fit."><svg class="map-svg" data-map-svg role="group" aria-label="Goodday service architecture diagram"><defs><marker id="csdm-arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z"></path></marker></defs><g data-edges></g><g data-nodes></g></svg></div><div class="map-zoom-bar"><span>Drag cards to move · drag space to pan · Shift + arrows to nudge</span><div><button type="button" data-zoom-out aria-label="Zoom out">−</button><button type="button" data-zoom-in aria-label="Zoom in">+</button><button type="button" data-fit>Fit to view</button></div></div></section>' +
       '<aside class="map-details" data-map-details aria-label="Selected record details" aria-hidden="true" inert><div class="map-panel-head"><div><p class="map-eyebrow">INSPECTOR</p><h4>Details</h4></div><button type="button" class="map-panel-close" data-detail-close aria-label="Close details">×</button></div><div class="map-detail-content" data-detail-content><div class="map-detail-empty"><span aria-hidden="true">↗</span><strong>Select a record or relationship</strong><p>Choose a map node or directed edge to inspect its source and evidence.</p></div></div></aside>' +
       '</div>' +
       '<section class="map-coverage" aria-labelledby="map-coverage-title"><div class="map-coverage-heading"><p class="map-eyebrow">WHAT THIS SNAPSHOT DOES NOT SHOW</p><h4 id="map-coverage-title">Coverage stays visible.</h4><p>The map reflects the exported records. Missing evidence remains a gap, not an inferred status.</p></div><article><span>01 / DELIVERY</span><strong>No change requests or delivery artifacts</strong><p>No change request records, pipeline executions, build artifacts, software bills of materials, test runs, or immutable release digests are in this snapshot.</p></article><article><span>02 / TECHNOLOGY RISK</span><strong>No risk or debt assessments</strong><p>There are no technical-risk or technical-debt assessment records, so no scores are shown.</p></article><article><span>03 / ARTIFICIAL INTELLIGENCE GOVERNANCE</span><strong>Documented assets, incomplete inventory</strong><p>No confirmed artificial intelligence prompt or Model Context Protocol server asset is present. Prompt-related information objects and the Goodday Model Context Protocol configuration item are included. The last Ollama loaded-model check was empty.</p></article></section>' +
@@ -458,6 +458,15 @@
     if (side === 'top') return { x: position.x, y: position.y - position.h / 2 };
     return { x: position.x, y: position.y + position.h / 2 };
   }
+  function outsidePoint(position, side, gap) {
+    const distance = gap || 28;
+    const edge = borderPoint(position, side);
+    if (side === 'left') edge.x -= distance;
+    else if (side === 'right') edge.x += distance;
+    else if (side === 'top') edge.y -= distance;
+    else edge.y += distance;
+    return edge;
+  }
   function simplifyPath(points) {
     const result = [];
     points.forEach(function (point) {
@@ -527,10 +536,12 @@
     const candidates = [];
     sourceSides.forEach(function (sourceSide) {
       targetSides.forEach(function (targetSide) {
-        const start = borderPoint(source.position, sourceSide);
-        const end = borderPoint(target.position, targetSide);
-        candidates.push(simplifyPath([start, { x: end.x, y: start.y }, end]));
-        candidates.push(simplifyPath([start, { x: start.x, y: end.y }, end]));
+        const sourcePort = borderPoint(source.position, sourceSide);
+        const sourceOutside = outsidePoint(source.position, sourceSide);
+        const targetPort = borderPoint(target.position, targetSide);
+        const targetOutside = outsidePoint(target.position, targetSide);
+        candidates.push(simplifyPath([sourcePort, sourceOutside, { x: targetOutside.x, y: sourceOutside.y }, targetOutside, targetPort]));
+        candidates.push(simplifyPath([sourcePort, sourceOutside, { x: sourceOutside.x, y: targetOutside.y }, targetOutside, targetPort]));
       });
     });
     const minY = Math.min(source.position.y, target.position.y), maxY = Math.max(source.position.y, target.position.y);
@@ -539,9 +550,10 @@
     const railsX = [minX - 38, maxX + 38, (minX + maxX) / 2 - 34, (minX + maxX) / 2 + 34];
     sourceSides.forEach(function (sourceSide) {
       targetSides.forEach(function (targetSide) {
-        const start = borderPoint(source.position, sourceSide), end = borderPoint(target.position, targetSide);
-        railsY.forEach(function (y) { candidates.push(simplifyPath([start, { x: start.x, y: y }, { x: end.x, y: y }, end])); });
-        railsX.forEach(function (x) { candidates.push(simplifyPath([start, { x: x, y: start.y }, { x: x, y: end.y }, end])); });
+        const sourcePort = borderPoint(source.position, sourceSide), sourceOutside = outsidePoint(source.position, sourceSide);
+        const targetPort = borderPoint(target.position, targetSide), targetOutside = outsidePoint(target.position, targetSide);
+        railsY.forEach(function (y) { candidates.push(simplifyPath([sourcePort, sourceOutside, { x: sourceOutside.x, y: y }, { x: targetOutside.x, y: y }, targetOutside, targetPort])); });
+        railsX.forEach(function (x) { candidates.push(simplifyPath([sourcePort, sourceOutside, { x: x, y: sourceOutside.y }, { x: x, y: targetOutside.y }, targetOutside, targetPort])); });
       });
     });
     let best = null, bestScore = Infinity;
@@ -550,7 +562,7 @@
       const score = pathCost(points) + blocked * 100000;
       if (score < bestScore) { best = points; bestScore = score; }
     });
-    best = best || [borderPoint(source.position, 'right'), borderPoint(target.position, 'left')];
+    best = best || [borderPoint(source.position, horizontalSource), outsidePoint(source.position, horizontalSource), outsidePoint(target.position, horizontalTarget), borderPoint(target.position, horizontalTarget)];
     let d = 'M ' + best[0].x + ' ' + best[0].y;
     for (let i = 1; i < best.length; i += 1) d += ' L ' + best[i].x + ' ' + best[i].y;
     const midpoint = pathMidpoint(best);
@@ -1129,4 +1141,8 @@
     return '<div class="map-detail-tag is-relationship">DIRECTED RELATIONSHIP</div><h5>' + escapeHtml(edge.label || 'Relationship') + '</h5><div class="map-endpoint"><small>SOURCE</small><strong>' + escapeHtml(recordLabel(source || { name: edge.source })) + '</strong><span>' + escapeHtml(source && (source.className || source.table) || '') + '</span></div><div class="map-endpoint map-endpoint-target"><small>TARGET</small><strong>' + escapeHtml(recordLabel(target || { name: edge.target })) + '</strong><span>' + escapeHtml(target && (target.className || target.table) || '') + '</span></div><dl class="map-detail-list"><div><dt>Source table</dt><dd>' + escapeHtml(edge.sourceRecord && edge.sourceRecord.table || 'Not supplied') + '</dd></div><div><dt>Source sys_id</dt><dd class="map-monospace">' + escapeHtml(edge.sourceRecord && edge.sourceRecord.sysId || 'Not supplied') + '</dd></div>' + (edge.relationshipType ? '<div><dt>Relationship type id</dt><dd class="map-monospace">' + escapeHtml(edge.relationshipType) + '</dd></div>' : '') + (metadata.evidenceStatus ? '<div><dt>Evidence status</dt><dd>' + escapeHtml(metadata.evidenceStatus.replace(/_/g, ' ')) + '</dd></div>' : '') + (metadata.sourceUpdatedAt ? '<div><dt>Source updated</dt><dd>' + escapeHtml(metadata.sourceUpdatedAt) + '</dd></div>' : '') + '</dl>' + (attributes.length ? '<section class="map-detail-section"><h6>Safe relationship attributes</h6><dl class="map-detail-list">' + attributes.map(function (pair) { return '<div><dt>' + escapeHtml(pair[0]) + '</dt><dd>' + escapeHtml(pair[1]) + '</dd></div>'; }).join('') + '</dl></section>' : '');
   }
   window.GooddayCSDMMap = { mount: mount };
+  if (!document.getElementById('reader-body')) {
+    const standaloneMount = document.querySelector('[data-csdm-map-mount]');
+    if (standaloneMount) mount(standaloneMount);
+  }
 })();
