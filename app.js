@@ -52,6 +52,11 @@
     while (index < lines.length) {
       const line = lines[index];
       if (!line.trim()) { index += 1; continue; }
+      if (/^:::csdm-map\s*$/.test(line)) {
+        output.push('<div class=\"csdm-map-mount\" data-csdm-map-mount><p class=\"csdm-map-static-note\">The interactive map is available in the web edition.</p></div>');
+        index += 1;
+        continue;
+      }
       const imageMatch = line.match(/^!\[([^\]]*)\]\(([^)]+)\)\s*$/);
       if (imageMatch) {
         let caption = imageMatch[1];
@@ -125,6 +130,7 @@
   }
   function classifySection(book, heading) {
     if (book.id === 'field-account') {
+      if (/^Interlude\b/i.test(heading)) return 'Part two · ServiceNow in context';
       if (/^Appendix [A-Z]\b/i.test(heading)) return 'Field guides & appendices';
       if (/^Sources(?: and further reading| and scope)?/i.test(heading)) return 'About this book';
       if (/^Closing$/i.test(heading)) return 'Closing';
@@ -168,7 +174,7 @@
       sections.push({
         id: slugify(book.id + '-' + title), title: title,
         group: book.id === 'field-account' ? classifySection(book, title) : group,
-        kind: /^Appendix [A-Z]\b/i.test(title) ? 'appendix' : (/^Sources(?: and further reading| and scope)?/i.test(title) ? 'sources' : (/^Closing$/i.test(title) ? 'closing' : (/^Chapter\b|^\d+\b/.test(title) ? 'chapter' : 'section'))),
+        kind: /^Interlude\b/i.test(title) ? 'interlude' : (/^Appendix [A-Z]\b/i.test(title) ? 'appendix' : (/^Sources(?: and further reading| and scope)?/i.test(title) ? 'sources' : (/^Closing$/i.test(title) ? 'closing' : (/^Chapter\b|^\d+\b/.test(title) ? 'chapter' : 'section')))),
         content: content, index: sections.length
       });
     });
@@ -236,14 +242,19 @@
         label.className = 'toc-group-label'; label.textContent = groupName; container.appendChild(label);
       }
       const button = document.createElement('button');
-      button.type = 'button'; button.className = 'toc-item' + (index === activeIndex ? ' is-current' : '');
+      button.type = 'button'; button.className = 'toc-item' + (index === activeIndex ? ' is-current' : '') + (section.kind === 'interlude' ? ' toc-item-feature' : '');
       button.dataset.sectionIndex = String(index);
       button.setAttribute('aria-current', index === activeIndex ? 'page' : 'false');
       const number = document.createElement('span');
-      number.className = 'toc-number'; number.textContent = String(index + 1).padStart(2, '0');
+      number.className = 'toc-number'; number.textContent = section.kind === 'interlude' ? '↗' : String(index + 1).padStart(2, '0');
       const title = document.createElement('span');
       title.textContent = section.title;
       button.appendChild(number); button.appendChild(title);
+      if (section.kind === 'interlude') {
+        const feature = document.createElement('span');
+        feature.className = 'toc-feature-label'; feature.textContent = 'MAP';
+        button.appendChild(feature);
+      }
       if (readSet(activeBookId, 'bookmarks').has(section.id)) {
         const saved = document.createElement('span');
         saved.className = 'toc-bookmark'; saved.setAttribute('aria-label', 'Saved'); saved.textContent = '◆'; button.appendChild(saved);
@@ -273,6 +284,7 @@
     else if (section.kind === 'preface') kicker = 'OPENING NOTE';
     else if (section.kind === 'sources') kicker = 'SOURCE NOTES';
     else if (section.kind === 'closing') kicker = 'CLOSING';
+    else if (section.kind === 'interlude') kicker = 'FEATURE INTERLUDE';
     else if (section.kind === 'chapter') kicker = 'CHAPTER / SECTION';
     el('reader-kicker').textContent = kicker;
     el('reader-page-label').textContent = book.meta.shortLabel;
@@ -281,6 +293,17 @@
     el('section-count').textContent = 'SECTION ' + sectionNumber + ' OF ' + book.sections.length;
     el('section-count').setAttribute('aria-label', 'Section ' + (activeIndex + 1) + ' of ' + book.sections.length);
     el('reader-body').innerHTML = renderMarkdown(section.content, book.meta);
+    const mapMount = el('reader-body').querySelector('[data-csdm-map-mount]');
+    el('reader-article').classList.toggle('has-map-interlude', !!mapMount);
+    el('reader-body').closest('.reader-layout').classList.toggle('has-map-interlude', !!mapMount);
+    if (mapMount && window.GooddayCSDMMap) window.GooddayCSDMMap.mount(mapMount);
+    if (section.kind === 'interlude' || /^(?:9|10|11|12)\b/.test(section.title)) {
+      const explorer = document.createElement('aside');
+      explorer.className = 'record-explorer-cta';
+      explorer.innerHTML = '<div><p class="eyebrow">FROM THE STORY TO THE SYSTEM</p><strong>Step inside Goodday’s workspace views.</strong><span>Explore full-width fields, related lists, and service context in the local guide.</span></div><button class="button button-dark" type="button">Inside Goodday <span aria-hidden="true">↗</span></button>';
+      explorer.querySelector('button').addEventListener('click', function () { activateView('service-now', true); });
+      el('reader-body').appendChild(explorer);
+    }
     const bookmarks = readSet(activeBookId, 'bookmarks'), saved = bookmarks.has(section.id);
     el('bookmark-button').setAttribute('aria-pressed', String(saved));
     el('bookmark-button').querySelector('span').textContent = saved ? 'Saved' : 'Save';
@@ -399,7 +422,7 @@
         markup += '<h2 class="print-part">' + escapeHtml(section.group) + '</h2>';
       }
       previousGroup = section.group;
-      const label = section.kind === 'appendix' ? 'FIELD GUIDE' : (section.kind === 'preface' ? 'OPENING' : (section.kind === 'sources' ? 'ABOUT THIS BOOK' : 'GOODDAY'));
+      const label = section.kind === 'interlude' ? 'FEATURE INTERLUDE' : (section.kind === 'appendix' ? 'FIELD GUIDE' : (section.kind === 'preface' ? 'OPENING' : (section.kind === 'sources' ? 'ABOUT THIS BOOK' : 'GOODDAY')));
       const printableContent = section.content.replace(/[—–−]/g, '-');
       const body = renderMarkdown(printableContent, book.meta).replace(/ loading="lazy"/g, '');
       markup += '<section class="print-chapter"><p class="print-kicker">' + label + '</p><h2>' + escapeHtml(section.title) + '</h2><div class="print-body">' + body + '</div></section>';
@@ -559,6 +582,14 @@
       if (button) openFigure(Number(button.dataset.galleryIndex));
     });
     el('reader-body').addEventListener('click', function (event) {
+      const interludeLink = event.target.closest('a[href=\"#field-account-interlude-the-system-behind-the-story\"]');
+      if (interludeLink) {
+        event.preventDefault();
+        const book = data[activeBookId];
+        const targetIndex = book.sections.findIndex(function (section) { return section.id === 'field-account-interlude-the-system-behind-the-story'; });
+        if (targetIndex >= 0) setSection(targetIndex, true);
+        return;
+      }
       const image = event.target.closest('figure img');
       if (!image) return;
       const index = figures.findIndex(function (figure) { return figure.src === image.src; });
@@ -605,12 +636,12 @@
       const params = new URLSearchParams(window.location.search);
       activeBookId = BOOKS[params.get('book')] ? params.get('book') : 'field-account';
       const book = data[activeBookId], requestedSection = params.get('section');
-      el('chapter-count').textContent = book.sections.filter(function (section) { return section.kind === 'chapter'; }).length;
+      el('chapter-count').textContent = book.sections.filter(function (section) { return section.kind === 'chapter' || section.kind === 'interlude'; }).length;
       el('guide-count').textContent = book.sections.filter(function (section) { return section.kind === 'appendix'; }).length;
       const requestedIndex = book.sections.findIndex(function (section) { return section.id === requestedSection; });
       activeIndex = requestedIndex >= 0 ? requestedIndex : getCurrentIndexForBook(book);
       const hashView = window.location.hash.replace(/^#/, '');
-      activeView = ['read', 'timeline', 'gallery', 'glossary', 'sources'].includes(hashView) ? hashView : 'read';
+      activeView = ['read', 'timeline', 'gallery', 'glossary', 'sources', 'service-now'].includes(hashView) ? hashView : 'read';
       el('edition-indicator').innerHTML = '<span class="edition-dot"></span><span>' + escapeHtml(book.meta.label) + '</span>';
       renderReader(); renderTimeline(); renderFigures(); renderGlossary(); renderSources(); renderPrintBook();
       activateView(activeView, false);

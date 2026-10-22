@@ -4,13 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f3f1e9">
-  <meta name="description" content="An interactive book about building Goodday with AI agents, connecting product and service design, and keeping human judgment in the loop.">
+  <meta name="description" content="An interactive book about building Goodday with AI agents, including an explorable service architecture map and the human decisions around it.">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https://www.googletagmanager.com https://*.google-analytics.com; style-src 'self' 'unsafe-inline'; script-src 'self' https://www.googletagmanager.com; connect-src 'self' https://www.googletagmanager.com https://*.google-analytics.com https://*.google.com; object-src 'none'; base-uri 'self'; form-action 'none'">
   <title>Building Goodday — From a family app to a connected service</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="stylesheet" href="./styles.css">
   <script src="./analytics.js" defer></script>
+  <script src="./csdm-map.js" defer></script>
   <script src="./app.js" defer></script>
 </head>
 <body>
@@ -26,6 +27,7 @@
       <button class="nav-link" type="button" data-view="timeline">Chronology</button>
       <button class="nav-link" type="button" data-view="gallery">Figures</button>
       <button class="nav-link" type="button" data-view="glossary">Glossary</button>
+      <button class="nav-link" type="button" data-view="service-now">Inside Goodday</button>
     </nav>
     <div class="header-actions">
       <button class="icon-button search-trigger" type="button" id="search-open" aria-label="Search the book" title="Search the book (/)">
@@ -46,6 +48,7 @@
     <button type="button" data-view="timeline">The journey</button>
     <button type="button" data-view="gallery">Figures</button>
     <button type="button" data-view="glossary">Glossary</button>
+    <button type="button" data-view="service-now">Inside Goodday</button>
     <button type="button" id="mobile-search-open">Search the book</button>
   </nav>
 
@@ -135,7 +138,8 @@
         <button class="view-tab" type="button" role="tab" aria-selected="false" data-view="timeline"><span>02</span> Chronology</button>
         <button class="view-tab" type="button" role="tab" aria-selected="false" data-view="gallery"><span>03</span> Figures</button>
         <button class="view-tab" type="button" role="tab" aria-selected="false" data-view="glossary"><span>04</span> Glossary</button>
-        <button class="view-tab" type="button" role="tab" aria-selected="false" data-view="sources"><span>05</span> About this book</button>
+        <button class="view-tab" type="button" role="tab" aria-selected="false" data-view="service-now"><span>05</span> Inside Goodday</button>
+        <button class="view-tab" type="button" role="tab" aria-selected="false" data-view="sources"><span>06</span> About this book</button>
       </div>
 
       <section class="work-panel is-active" id="panel-read" data-panel="read" role="tabpanel" aria-label="Book reader">
@@ -233,6 +237,15 @@
           <p>Downloads the complete, illustrated edition.</p>
         </div>
         <div class="scope-content" id="scope-content"></div>
+      </section>
+
+      <section class="work-panel service-now-panel" id="panel-service-now" data-panel="service-now" role="tabpanel" aria-label="Inside Goodday field guide" hidden>
+        <div class="explore-panel-header">
+          <div><p class="eyebrow">THE SYSTEM BEHIND THE STORY</p><h3>Explore Goodday<br><em>from every angle.</em></h3></div>
+          <div class="panel-note"><span class="note-mark">↗</span><p>Follow the architecture, artificial intelligence, operations, service map, and delivery evidence through readable local record pages.</p></div>
+        </div>
+        <div class="service-now-intro"><span class="offline-status-dot" aria-hidden="true"></span><p>Offline HTML snapshot · captured 21 Oct 2026 · drawn from Enterprise Architecture, Artificial Intelligence Control Tower, Service Operations, Service Mapping, and DevOps Change workspaces.</p><a class="button button-dark" href="./servicenow-offline/index.html" target="_blank" rel="noopener">Open full-width guide ↗</a></div>
+        <iframe class="service-now-record-frame" src="./servicenow-offline/index.html" title="Inside Goodday · offline system guide" loading="lazy"></iframe>
       </section>
     </section>
 

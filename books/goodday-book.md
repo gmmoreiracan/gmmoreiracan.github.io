@@ -30,6 +30,7 @@ This is a personal field account, illustrated with selected screenshots of the G
 - 9 Delivery evidence and clear approvals
 - 10 Event Management makes operations visible
 - 11 CSDM and Enterprise Architecture give the service context
+- [Interlude · The System Behind the Story — interactive map](#field-account-interlude-the-system-behind-the-story)
 - 12 AI systems in business context
 - 13 Product releases and business value
 
@@ -168,6 +169,8 @@ The app places a person at the decision point. An adult reviews a proposed chore
 
 That boundary is especially important in a family product. Household schedules, profiles, and routines can be sensitive. The design gives optional integrations a clear purpose and keeps review visible. Goodday also records useful interaction metadata for an owner without copying conversation text into its audit trail.
 
+The [Artificial Intelligence Control Tower view in the interactive map](#field-account-interlude-the-system-behind-the-story) shows the governed assets beside their application and deployment records.
+
 Goodday's external tool interface makes its permissions visible. An owner can limit which tools an approved client may call and review the region the client declares before granting access. The declaration helps a person assess the request; it does not independently verify where the external client processes data.
 
 ![External client tool permissions for Goodday](./mini-book-assets/redacted/mcp-tool-permissions.png)
@@ -240,6 +243,8 @@ A release brings several kinds of evidence together: the requested change, the s
 
 ServiceNow's delivery model connected work, source, checks, and approvals to a release path. Considering Goodday through this lens showed how a change can be discussed as a sequence of named evidence, rather than one green light.
 
+The [Development and Operations view in the interactive map](#field-account-interlude-the-system-behind-the-story) connects software delivery components, interfaces, and runtime records where present. This snapshot has no pipeline executions, build artifacts, or software bills of materials.
+
 ![Goodday DevOps story for test and deployment evidence](./mini-book-assets/servicenow/dvc-evidence-story.png)
 
 *The DevOps story defines the evidence expected for a release and keeps production deployment behind an approved change. This is a draft requirement record, not a deployment report.*
@@ -282,11 +287,15 @@ An event is not the same as a metric, a log entry, or an alert. Metrics help rev
 
 The event also needs a lifecycle. A continuing condition should update the same signal rather than create an unbounded list of duplicates. A recovery sample should close or clear it. The person on call needs to understand what changed and whether the service returned to a healthy state. A privacy-minimized payload makes this easier to do without exporting the household request, model prompt, or image that happened to be present when a failure occurred.
 
+The [Operations view in the interactive map](#field-account-interlude-the-system-behind-the-story) follows the Service Delivery records and their connected runtime context.
+
 ## 11 CSDM and Enterprise Architecture give the service context
 
 CSDM and Enterprise Architecture helped describe Goodday as a business application supported by services and technical components. The model connected household capabilities such as planning chores, reviewing work, and managing rewards to the application services that deliver them.
 
 The technical view can then be related to the wider service model. A service model helps people understand the components and relationships that support the application without turning the narrative into an inventory of development records.
+
+The [Technology Risk and Enterprise Architecture view in the interactive map](#field-account-interlude-the-system-behind-the-story) brings applications, integrations, information objects, and related technology components into one view. It contains no technical-risk or technical-debt assessment results.
 
 That relationship changes how people can ask questions. A business owner can begin with the household outcome. An operator can follow the service to its application and dependencies. An architect can see how applications, capabilities, and information flows fit together.
 
@@ -320,9 +329,27 @@ For Goodday, that meant describing a family product in terms people could unders
 
 *The CMDB Workspace view connects the production service to its web edge, application runtime, containers, and database. It is a point-in-time view of recorded dependencies.*
 
+![Goodday Enterprise Architecture and CSDM relationship map](./mini-book-assets/servicenow/csdm-ea.png)
+
+*Figure 3. The map relates Goodday's business application and interfaces to services, runtime components, data, and AI deployments. Some links still point to earlier container identities, so this remains a useful snapshot with reconciliation work remaining. [Explore the interactive map →](#field-account-interlude-the-system-behind-the-story)*
+
+## Interlude — The System Behind the Story
+
+Figure 3 introduced the system as a still image. This is the map readers can explore: a static service-model snapshot of the records and relationships around Goodday Family Chores, arranged from business context through design, build, and operational delivery.
+
+Choose a product view, combine it with one or more service-model domains, then open a group to inspect its records. A record can carry several tags, so the filters overlap. Every arrow follows the direction recorded in the source relationship. Search also reaches supporting records such as request-header records and relationship rows without drawing them as graph nodes.
+
+:::csdm-map
+
+The map is a snapshot, not a live ServiceNow connection. Its evidence labels distinguish live table records from AI assets carried forward from repository documentation. Expand the service and build groups to inspect the named records behind the overview.
+
+The connected views lead into the next section, where Artificial Intelligence Control Tower records, deployment configuration items, prompt and data context, and the Goodday Model Context Protocol component come into focus in their business setting.
+
 ## 12 AI systems in business context
 
 AI governance becomes more practical when an AI system is connected to the business applications and services that use it. Enterprise Architecture and AI Control Tower offer a way to describe that relationship.
+
+The [Artificial Intelligence Control Tower view in the interactive map](#field-account-interlude-the-system-behind-the-story) connects the documented assets with their deployment configuration items, prompt-related information objects, and the Goodday Model Context Protocol component. The snapshot has no confirmed artificial intelligence prompt or Model Context Protocol server asset, and its last Ollama loaded-model check was empty.
 
 ![Goodday Chore Assistant record in AI Control Tower](./mini-book-assets/servicenow/aict-asset-redacted.png)
 
@@ -349,6 +376,8 @@ An MCP server and the external client that calls it should also remain distinct 
 ## 13 Product releases and business value
 
 The product story also needs a business view. For Goodday, the outcome is household coordination: make work clear, give people a way to review it, and connect effort to shared rewards.
+
+The map's [Business Context view](#field-account-interlude-the-system-behind-the-story) follows portfolios, taxonomy memberships, capabilities, value stream, services, offerings, and application dependencies.
 
 Enterprise Architecture provides a language for relating applications to capabilities and information. Application and technology portfolio practices can help teams discuss how software supports outcomes and how changes fit into a product's lifecycle.
 
