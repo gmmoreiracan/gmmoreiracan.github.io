@@ -4,9 +4,9 @@
   const DATA_URL = './books/mini-book-assets/csdm-map.json';
   const WIDTH = 2600;
   const HEIGHT = 1480;
-  const NODE_W = 218;
-  const NODE_H = 66;
-  const NODE_GAP = 12;
+  const NODE_W = 310;
+  const NODE_H = 108;
+  const NODE_GAP = 14;
   const LAYOUT_STORAGE_KEY = 'goodday:csdm-map:layout:v1';
   const SAFE_FIELDS = new Set([
     'active', 'assetType', 'availability', 'business_criticality', 'category', 'confidentiality',
@@ -38,19 +38,19 @@
     manage_portfolio: '#a56f8b'
   };
   const DOMAIN_LAYOUT = {
-    ideation_strategy: { x: 100, y: 170, w: 470, h: 154, anchor: { x: 350, y: 390 } },
-    manage_portfolio: { x: 350, y: 510, w: 470, h: 154, anchor: { x: 600, y: 750 } },
-    design_planning: { x: 820, y: 170, w: 470, h: 154, anchor: { x: 1070, y: 390 } },
-    foundation: { x: 1050, y: 520, w: 470, h: 154, anchor: { x: 1300, y: 760 } },
-    build_integration: { x: 1640, y: 230, w: 620, h: 154, anchor: { x: 1940, y: 470 } },
-    service_consumption: { x: 1330, y: 990, w: 500, h: 154, anchor: { x: 1580, y: 1210 } },
-    service_delivery: { x: 1880, y: 990, w: 600, h: 154, anchor: { x: 2180, y: 1210 } }
+    ideation_strategy: { x: 100, y: 170, w: 470, h: 170, anchor: { x: 335, y: 400 } },
+    manage_portfolio: { x: 100, y: 430, w: 470, h: 170, anchor: { x: 335, y: 740 } },
+    design_planning: { x: 640, y: 170, w: 470, h: 170, anchor: { x: 875, y: 400 } },
+    foundation: { x: 640, y: 430, w: 470, h: 170, anchor: { x: 875, y: 740 } },
+    build_integration: { x: 1180, y: 170, w: 620, h: 170, anchor: { x: 1490, y: 500 } },
+    service_consumption: { x: 640, y: 790, w: 500, h: 170, anchor: { x: 890, y: 1110 } },
+    service_delivery: { x: 1180, y: 790, w: 600, h: 170, anchor: { x: 1480, y: 1110 } }
   };
   const ZONES = [
-    { label: 'BUSINESS & PORTFOLIO', hint: 'outcomes · capabilities · memberships', x: 100, y: 75, w: 700, domains: ['ideation_strategy', 'manage_portfolio'] },
-    { label: 'DESIGN & INTEGRATION', hint: 'applications · interfaces · information', x: 820, y: 75, w: 700, domains: ['design_planning', 'foundation'] },
-    { label: 'BUILD & DELIVERY', hint: 'components · application interfaces · documented artificial intelligence assets', x: 1640, y: 105, w: 620, domains: ['build_integration'] },
-    { label: 'OPERATIONAL DELIVERY', hint: 'services · offerings · runtime CIs', x: 1330, y: 895, w: 1150, domains: ['service_consumption', 'service_delivery'] }
+    { label: 'BUSINESS & PORTFOLIO', hint: 'outcomes · capabilities · memberships', x: 100, y: 75, w: 470, domains: ['ideation_strategy', 'manage_portfolio'] },
+    { label: 'DESIGN & INTEGRATION', hint: 'applications · interfaces · information', x: 640, y: 75, w: 470, domains: ['design_planning', 'foundation'] },
+    { label: 'BUILD & DELIVERY', hint: 'components · application interfaces · documented artificial intelligence assets', x: 1180, y: 105, w: 620, domains: ['build_integration'] },
+    { label: 'OPERATIONAL DELIVERY', hint: 'services · offerings · runtime CIs', x: 640, y: 695, w: 1140, domains: ['service_consumption', 'service_delivery'] }
   ];
   let cachedData = null;
   let loadingData = null;
@@ -139,7 +139,7 @@
       '<label class="map-check-row"><input type="checkbox" data-context><span><strong>Show connected context</strong><small>Include directly connected records outside the selected filters.</small></span></label>' +
       '<label class="map-check-row"><input type="checkbox" data-labels><span><strong>Relationship labels</strong><small>Show labels and counts on directed edges.</small></span></label>' +
       '<div class="map-legend"><p class="map-field-label">NODE LEGEND</p><div class="map-legend-grid" data-legend></div><p class="map-legend-domain"><i></i> Service Delivery domain</p></div>' +
-      '</aside><section class="map-stage" aria-label="Interactive architecture diagram"><div class="map-canvas-topline"><span><i class="map-live-dot"></i> SERVICE RELATIONSHIP MAP</span><span data-map-layer-hint>Collapsed overview · select a domain to expand</span></div><div class="map-viewport" data-map-viewport tabindex="0" role="group" aria-label="Interactive architecture map. Drag record boxes to move them, drag open space to pan, and use the controls to zoom and fit."><svg class="map-svg" data-map-svg role="group" aria-label="Goodday service architecture diagram"><defs><marker id="csdm-arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z"></path></marker></defs><g data-edges></g><g data-nodes></g></svg></div><div class="map-zoom-bar"><span>Drag cards to move · drag space to pan · Shift + arrows to nudge</span><div><button type="button" data-zoom-out aria-label="Zoom out">−</button><button type="button" data-zoom-in aria-label="Zoom in">+</button><button type="button" data-fit>Fit to view</button></div></div></section>' +
+      '</aside><section class="map-stage" aria-label="Interactive architecture diagram"><div class="map-canvas-topline"><span><i class="map-live-dot"></i> SERVICE RELATIONSHIP MAP</span><span data-map-layer-hint>Collapsed overview · select a domain to expand</span></div><div class="map-viewport" data-map-viewport tabindex="0" role="group" aria-label="Interactive architecture map. Drag record boxes to move them, drag open space to pan, and use the controls to zoom and fit."><svg class="map-svg" data-map-svg role="group" aria-label="Goodday service architecture diagram"><defs><marker id="csdm-arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z"></path></marker></defs><g data-edges></g><g data-nodes></g></svg></div><div class="map-zoom-bar"><span class="map-gesture-desktop">Drag cards to move · drag space to pan · Shift + arrows to nudge</span><span class="map-gesture-mobile">One finger to pan · pinch to zoom</span><div><button type="button" data-zoom-out aria-label="Zoom out">−</button><button type="button" data-zoom-in aria-label="Zoom in">+</button><button type="button" data-fit>Fit to view</button></div></div></section>' +
       '<aside class="map-details" data-map-details aria-label="Selected record details" aria-hidden="true" inert><div class="map-panel-head"><div><p class="map-eyebrow">INSPECTOR</p><h4>Details</h4></div><button type="button" class="map-panel-close" data-detail-close aria-label="Close details">×</button></div><div class="map-detail-content" data-detail-content><div class="map-detail-empty"><span aria-hidden="true">↗</span><strong>Select a record or relationship</strong><p>Choose a map node or directed edge to inspect its source and evidence.</p></div></div></aside>' +
       '</div>' +
       '<section class="map-coverage" aria-labelledby="map-coverage-title"><div class="map-coverage-heading"><p class="map-eyebrow">WHAT THIS SNAPSHOT DOES NOT SHOW</p><h4 id="map-coverage-title">Coverage stays visible.</h4><p>The map reflects the exported records. Missing evidence remains a gap, not an inferred status.</p></div><article><span>01 / DELIVERY</span><strong>No change requests or delivery artifacts</strong><p>No change request records, pipeline executions, build artifacts, software bills of materials, test runs, or immutable release digests are in this snapshot.</p></article><article><span>02 / TECHNOLOGY RISK</span><strong>No risk or debt assessments</strong><p>There are no technical-risk or technical-debt assessment records, so no scores are shown.</p></article><article><span>03 / ARTIFICIAL INTELLIGENCE GOVERNANCE</span><strong>Documented assets, incomplete inventory</strong><p>No confirmed artificial intelligence prompt or Model Context Protocol server asset is present. Prompt-related information objects and the Goodday Model Context Protocol configuration item are included. The last Ollama loaded-model check was empty.</p></article></section>' +
@@ -377,15 +377,29 @@
       edges: Array.from(edgeGroups.values()), internalCounts: internalCounts };
   }
   function nodeTypeClass(record) { return 'kind-' + classify(record); }
-  function tspanText(value, max) {
-    const text = String(value || '');
-    if (text.length <= max) return [text];
-    const firstCut = text.lastIndexOf(' ', max);
-    const cut = firstCut > Math.round(max * .55) ? firstCut : max;
-    const first = text.slice(0, cut).trim();
-    let second = text.slice(cut).trim();
-    if (second.length > max) second = second.slice(0, max - 1) + '…';
-    return [first, second];
+  function tspanText(value, max, maxLines) {
+    let remaining = String(value || '').replace(/\s+/g, ' ').trim();
+    const lines = [];
+    const lineLimit = Math.max(1, maxLines || 2);
+    while (remaining && lines.length < lineLimit) {
+      let cut = Math.min(max, remaining.length);
+      if (remaining.length > max) {
+        const wordCut = remaining.lastIndexOf(' ', max);
+        if (wordCut > Math.round(max * .55)) cut = wordCut;
+      }
+      lines.push(remaining.slice(0, cut).trim());
+      remaining = remaining.slice(cut).trimStart();
+    }
+    if (remaining && lines.length) {
+      const last = lines.length - 1;
+      lines[last] = lines[last].slice(0, Math.max(1, max - 1)).trimEnd() + '…';
+    }
+    return lines.length ? lines : [''];
+  }
+  function renderTspans(lines, x, lineHeight) {
+    return lines.map(function (line, index) {
+      return '<tspan x="' + x + '"' + (index ? ' dy="' + lineHeight + '"' : '') + '>' + escapeHtml(line) + '</tspan>';
+    }).join('');
   }
   function renderRecordNode(vertex) {
     const record = vertex.record;
@@ -393,7 +407,7 @@
     const x = position.x - NODE_W / 2, y = position.y - NODE_H / 2;
     const style = TYPE_STYLES[classify(record)];
     const name = recordLabel(record);
-    const lines = tspanText(name, 25);
+    const lines = tspanText(name, 22, 4);
     const selected = state.selected && state.selected.kind === 'record' && state.selected.id === record.id;
     const context = activeController && activeController._visible && activeController._visible.contextIds.has(record.id);
     const searchable = state.search && name.toLowerCase().includes(state.search.toLowerCase());
@@ -412,9 +426,9 @@
     const label = name + ', ' + style.label + ', ' + (record.className || record.table) + (description ? '. ' + description : '') + '. Drag to move; use Alt and arrow keys to nudge.';
     return '<g class="map-node ' + nodeTypeClass(record) + (selected ? ' is-selected' : '') + (nodeConnected ? ' is-connected' : '') + (edgeEndpoint ? ' is-edge-endpoint' : '') + (dimmed ? ' is-dimmed' : '') + (context ? ' is-context' : '') + (searchable ? ' is-search-match' : '') + '" data-node-id="' + escapeHtml(record.id) + '" data-move-id="' + escapeHtml(record.id) + '" data-draggable="true" tabindex="0" role="button" aria-keyshortcuts="Shift+ArrowUp Shift+ArrowDown Shift+ArrowLeft Shift+ArrowRight Alt+ArrowUp Alt+ArrowDown Alt+ArrowLeft Alt+ArrowRight" aria-label="' + escapeHtml(label) + '" aria-pressed="' + String(!!selected) + '">' +
       '<title>' + escapeHtml(name + ' · ' + (record.className || record.table)) + '</title><rect class="map-node-card" x="' + x + '" y="' + y + '" width="' + NODE_W + '" height="' + NODE_H + '" rx="11"></rect><rect class="map-node-accent" x="' + (x + 1) + '" y="' + (y + 11) + '" width="4" height="' + (NODE_H - 22) + '" rx="2"></rect>' +
-      '<circle class="map-node-mark-bg" cx="' + (x + 26) + '" cy="' + (y + 24) + '" r="14"></circle><text class="map-node-mark" x="' + (x + 26) + '" y="' + (y + 27) + '" text-anchor="middle">' + style.mark + '</text>' +
-      '<text class="map-node-label" x="' + (x + 48) + '" y="' + (y + 24) + '">' + escapeHtml(lines[0]) + (lines[1] ? '<tspan x="' + (x + 48) + '" dy="14">' + escapeHtml(lines[1]) + '</tspan>' : '') + '</text>' +
-      '<text class="map-node-class" x="' + (x + 48) + '" y="' + (y + 55) + '">' + escapeHtml(record.className || record.table) + (metadata.evidenceStatus === 'documented_snapshot' ? ' · DOCUMENTED' : '') + '</text></g>';
+      '<circle class="map-node-mark-bg" cx="' + (x + 28) + '" cy="' + (y + 48) + '" r="14"></circle><text class="map-node-mark" x="' + (x + 28) + '" y="' + (y + 51) + '" text-anchor="middle">' + style.mark + '</text>' +
+      '<text class="map-node-label" x="' + (x + 53) + '" y="' + (y + 24) + '">' + renderTspans(lines, x + 53, 17) + '</text>' +
+      '<text class="map-node-class" x="' + (x + 53) + '" y="' + (y + 99) + '">' + escapeHtml(tspanText((record.className || record.table) + (metadata.evidenceStatus === 'documented_snapshot' ? ' · DOCUMENTED' : ''), 32, 1)[0]) + '</text></g>';
   }
   function renderDomainBox(domain, box, data, layout, visible) {
     const label = (data.csdmDomains.find(function (item) { return item.id === domain; }) || {}).label || domain;
@@ -432,11 +446,11 @@
     let markup = '<g class="map-domain-group' + (groupSelected ? ' is-selected' : '') + '" style="--domain-accent:' + accent + '">';
     if (!box.expanded) {
       const names = box.records.slice(0, 3).map(recordLabel);
-      const shown = names.map(escapeHtml).join(' · ');
+      const shown = tspanText(names.join(' · ') || 'No records in the selected view', Math.max(28, Math.floor((w - 48) / 7.5)), 2);
       markup += '<g class="map-cluster-node" data-domain-toggle="' + escapeHtml(domain) + '" data-move-id="domain:' + escapeHtml(domain) + '" tabindex="0" role="button" aria-keyshortcuts="Shift+ArrowUp Shift+ArrowDown Shift+ArrowLeft Shift+ArrowRight" aria-expanded="false" aria-label="Drag to move or activate to expand ' + escapeHtml(label) + ', ' + strictCount + ' matching records and ' + internal + ' internal relationships">' +
         '<title>Activate to expand ' + escapeHtml(label) + '</title><rect class="map-cluster-card" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="15"></rect><rect class="map-cluster-band" x="' + x + '" y="' + y + '" width="7" height="' + h + '" rx="4"></rect>' +
-        '<text class="map-cluster-title" x="' + (x + 24) + '" y="' + (y + 35) + '">' + escapeHtml(label) + '</text><text class="map-cluster-count" x="' + (x + w - 24) + '" y="' + (y + 34) + '" text-anchor="end">' + strictCount + ' MATCHING RECORDS' + (contextCount ? ' · ' + contextCount + ' CONTEXT' : '') + '</text>' +
-        '<text class="map-cluster-examples" x="' + (x + 24) + '" y="' + (y + 73) + '">' + (shown || 'No records in the selected view') + '</text><text class="map-cluster-meta" x="' + (x + 24) + '" y="' + (y + 105) + '">' + internal + ' internal links · Select to expand</text><text class="map-cluster-arrow" x="' + (x + w - 27) + '" y="' + (y + h - 21) + '" text-anchor="end">↗</text></g>';
+        '<text class="map-cluster-title" x="' + (x + 24) + '" y="' + (y + 38) + '">' + escapeHtml(label) + '</text><text class="map-cluster-count" x="' + (x + w - 24) + '" y="' + (y + 37) + '" text-anchor="end">' + strictCount + ' MATCHING RECORDS' + (contextCount ? ' · ' + contextCount + ' CONTEXT' : '') + '</text>' +
+        '<text class="map-cluster-examples" x="' + (x + 24) + '" y="' + (y + 75) + '">' + renderTspans(shown, x + 24, 18) + '</text><text class="map-cluster-meta" x="' + (x + 24) + '" y="' + (y + 124) + '">' + internal + ' internal links · Select to expand</text><text class="map-cluster-arrow" x="' + (x + w - 27) + '" y="' + (y + h - 21) + '" text-anchor="end">↗</text></g>';
     } else {
       const anchor = box.anchor || { x: x + w / 2, y: y + 220 };
       const headX = anchor.x - 160, headY = anchor.y - 150;
@@ -684,7 +698,10 @@
   }
   function focusDomain(root, domain) {
     const box = root._layout && root._layout.domainBoxes.get(domain);
-    if (box) fitBox(root, box, 38);
+    if (box) {
+      fitBox(root, box, 38);
+      zoom(root, .55);
+    }
   }
   function focusRecord(root, recordId) {
     const position = root._layout && root._layout.recordPositions.get(recordId);
@@ -875,8 +892,72 @@
       }
     });
     let pointer = null;
+    const touchPoints = new Map();
+    let pinch = null;
+    function currentViewBox() {
+      return Object.assign({}, state.viewBox || { x: 0, y: 0, w: WIDTH, h: root._layout.height });
+    }
+    function capturePointer(event) {
+      try { viewport.setPointerCapture(event.pointerId); } catch (_) {}
+    }
+    function suppressGestureClick() {
+      root._suppressNextClick = true;
+      window.setTimeout(function () { root._suppressNextClick = false; }, 500);
+    }
+    function beginPinch() {
+      const points = Array.from(touchPoints.entries()).slice(0, 2);
+      if (points.length < 2) return;
+      const a = points[0][1], b = points[1][1];
+      const rect = viewport.getBoundingClientRect();
+      const center = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+      const view = currentViewBox();
+      pinch = {
+        ids: [points[0][0], points[1][0]],
+        distance: Math.max(1, Math.hypot(b.x - a.x, b.y - a.y)),
+        view: view,
+        worldCenter: {
+          x: view.x + (center.x - rect.left) / rect.width * view.w,
+          y: view.y + (center.y - rect.top) / rect.height * view.h
+        }
+      };
+      pointer = { mode: 'pinch' };
+    }
+    function updatePinch() {
+      if (!pinch) return;
+      const a = touchPoints.get(pinch.ids[0]), b = touchPoints.get(pinch.ids[1]);
+      if (!a || !b) return;
+      const rect = viewport.getBoundingClientRect();
+      const distance = Math.max(1, Math.hypot(b.x - a.x, b.y - a.y));
+      const center = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+      const minWidth = Math.max(120, root._layout.width * .035);
+      const maxWidth = Math.max(minWidth * 2, root._layout.width * 1.8);
+      const width = Math.max(minWidth, Math.min(maxWidth, pinch.view.w * pinch.distance / distance));
+      const scale = width / pinch.view.w;
+      const height = pinch.view.h * scale;
+      state.viewBox = {
+        x: pinch.worldCenter.x - (center.x - rect.left) / rect.width * width,
+        y: pinch.worldCenter.y - (center.y - rect.top) / rect.height * height,
+        w: width,
+        h: height
+      };
+      svg.setAttribute('viewBox', [state.viewBox.x, state.viewBox.y, width, height].join(' '));
+    }
     viewport.addEventListener('pointerdown', function (event) {
-      if (event.button !== 0) return;
+      if (event.pointerType === 'touch') {
+        touchPoints.set(event.pointerId, { x: event.clientX, y: event.clientY });
+        capturePointer(event);
+        if (touchPoints.size >= 2) {
+          if (pointer && pointer.mode === 'node') pointer.element.classList.remove('is-dragging');
+          viewport.classList.remove('is-dragging-node');
+          viewport.classList.add('is-panning');
+          pointer = { mode: 'pinch' };
+          beginPinch();
+          suppressGestureClick();
+          event.preventDefault();
+          return;
+        }
+      }
+      if (event.pointerType !== 'touch' && event.button !== 0) return;
       const movable = event.target.closest('[data-move-id]');
       if (movable) {
         const vertex = root._layout.vertices.get(movable.dataset.moveId);
@@ -884,19 +965,28 @@
         const world = svgPoint(svg, event);
         pointer = { mode: 'node', id: event.pointerId, vertexId: vertex.id, vertex: vertex, element: movable,
           start: { x: vertex.position.x, y: vertex.position.y }, origin: world, moved: false };
-        viewport.setPointerCapture(event.pointerId);
+        capturePointer(event);
         viewport.classList.add('is-dragging-node');
         event.preventDefault();
         return;
       }
       if (event.target.closest('[data-edge-id], [data-domain-toggle]')) return;
       pointer = { mode: 'pan', id: event.pointerId, x: event.clientX, y: event.clientY,
-        view: Object.assign({}, state.viewBox || { x: 0, y: 0, w: WIDTH, h: root._layout.height }) };
-      viewport.setPointerCapture(event.pointerId);
+        view: currentViewBox() };
+      capturePointer(event);
       viewport.classList.add('is-panning');
     });
     viewport.addEventListener('pointermove', function (event) {
+      if (touchPoints.has(event.pointerId)) {
+        touchPoints.set(event.pointerId, { x: event.clientX, y: event.clientY });
+        if (pinch) {
+          updatePinch();
+          event.preventDefault();
+          return;
+        }
+      }
       if (!pointer || pointer.id !== event.pointerId) return;
+      if (pointer.mode === 'pinch') return;
       if (pointer.mode === 'node') {
         const current = svgPoint(svg, event);
         const dx = current.x - pointer.origin.x, dy = current.y - pointer.origin.y;
@@ -923,7 +1013,29 @@
       svg.setAttribute('viewBox', [state.viewBox.x, state.viewBox.y, state.viewBox.w, state.viewBox.h].join(' '));
     });
     function endPan(event) {
+      const wasTouch = touchPoints.has(event.pointerId);
+      if (wasTouch) touchPoints.delete(event.pointerId);
+      if (pinch && wasTouch) {
+        const remaining = Array.from(touchPoints.entries());
+        suppressGestureClick();
+        if (remaining.length >= 2) {
+          beginPinch();
+          return;
+        }
+        pinch = null;
+        if (remaining.length === 1) {
+          pointer = { mode: 'pan', id: remaining[0][0], x: remaining[0][1].x, y: remaining[0][1].y,
+            view: currentViewBox() };
+          viewport.classList.remove('is-dragging-node');
+          viewport.classList.add('is-panning');
+          return;
+        }
+        pointer = null;
+        viewport.classList.remove('is-panning', 'is-dragging-node');
+        return;
+      }
       if (!pointer || pointer.id !== event.pointerId) return;
+      if (pointer.mode === 'pinch') return;
       if (pointer.mode === 'node') {
         const drag = pointer;
         drag.element.classList.remove('is-dragging');
