@@ -700,7 +700,12 @@
     const box = root._layout && root._layout.domainBoxes.get(domain);
     if (box) {
       fitBox(root, box, 38);
-      zoom(root, .55);
+      const viewportWidth = root.querySelector('[data-map-viewport]').getBoundingClientRect().width;
+      const desiredScreenWidth = window.matchMedia('(max-width: 900px)').matches
+        ? Math.min(250, viewportWidth * .65)
+        : Math.min(300, viewportWidth * .32);
+      const currentScreenWidth = NODE_W * viewportWidth / state.viewBox.w;
+      zoom(root, Math.min(1, currentScreenWidth / desiredScreenWidth));
     }
   }
   function focusRecord(root, recordId) {
