@@ -12,4 +12,7 @@
     root.dataset.theme = theme;
     try { localStorage.setItem('goodday:theme', theme); } catch (_) {}
   });
+
+  const mapMount = document.querySelector('[data-csdm-map-mount]');
+  if (mapMount && window.GooddayCSDMMap) window.GooddayCSDMMap.mount(mapMount);
 })();
