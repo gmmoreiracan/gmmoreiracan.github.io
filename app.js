@@ -293,6 +293,7 @@
     el('section-count').textContent = 'SECTION ' + sectionNumber + ' OF ' + book.sections.length;
     el('section-count').setAttribute('aria-label', 'Section ' + (activeIndex + 1) + ' of ' + book.sections.length);
     el('reader-body').innerHTML = renderMarkdown(section.content, book.meta);
+    if (el('reader-body').firstElementChild) el('reader-body').firstElementChild.id = section.id;
     const mapMount = el('reader-body').querySelector('[data-csdm-map-mount]');
     el('reader-article').classList.toggle('has-map-interlude', !!mapMount);
     el('reader-body').closest('.reader-layout').classList.toggle('has-map-interlude', !!mapMount);
@@ -582,13 +583,16 @@
       if (button) openFigure(Number(button.dataset.galleryIndex));
     });
     el('reader-body').addEventListener('click', function (event) {
-      const interludeLink = event.target.closest('a[href=\"#field-account-interlude-the-system-behind-the-story\"]');
-      if (interludeLink) {
-        event.preventDefault();
+      const sectionLink = event.target.closest('a[href^=\"#\"]');
+      if (sectionLink) {
+        const targetId = sectionLink.getAttribute('href').slice(1);
         const book = data[activeBookId];
-        const targetIndex = book.sections.findIndex(function (section) { return section.id === 'field-account-interlude-the-system-behind-the-story'; });
-        if (targetIndex >= 0) setSection(targetIndex, true);
-        return;
+        const targetIndex = book.sections.findIndex(function (section) { return section.id === targetId || slugify(section.title) === targetId; });
+        if (targetIndex >= 0) {
+          event.preventDefault();
+          setSection(targetIndex, true);
+          return;
+        }
       }
       const image = event.target.closest('figure img');
       if (!image) return;
@@ -635,10 +639,10 @@
       await Promise.all(Object.keys(BOOKS).map(loadBook));
       const params = new URLSearchParams(window.location.search);
       activeBookId = BOOKS[params.get('book')] ? params.get('book') : 'field-account';
-      const book = data[activeBookId], requestedSection = params.get('section');
+      const book = data[activeBookId], hashTarget = window.location.hash.replace(/^#/, ''), requestedSection = params.get('section') || hashTarget;
       el('chapter-count').textContent = book.sections.filter(function (section) { return section.kind === 'chapter' || section.kind === 'interlude'; }).length;
       el('guide-count').textContent = book.sections.filter(function (section) { return section.kind === 'appendix'; }).length;
-      const requestedIndex = book.sections.findIndex(function (section) { return section.id === requestedSection; });
+      const requestedIndex = book.sections.findIndex(function (section) { return section.id === requestedSection || slugify(section.title) === requestedSection; });
       activeIndex = requestedIndex >= 0 ? requestedIndex : getCurrentIndexForBook(book);
       const hashView = window.location.hash.replace(/^#/, '');
       activeView = ['read', 'timeline', 'gallery', 'glossary', 'sources', 'service-now'].includes(hashView) ? hashView : 'read';
