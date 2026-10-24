@@ -154,9 +154,9 @@
       '<label class="map-field-label" for="map-product">PRODUCT VIEW</label><select id="map-product" class="map-product-select" data-product><option value="all">All product views</option></select>' +
       '<fieldset class="map-domain-fieldset"><legend>SERVICE MODEL DOMAINS <span>(combine tags)</span></legend><div class="map-domain-options" data-domains></div><p class="map-filter-hint">Records can belong to more than one domain. Selecting domains uses any matching tag.</p></fieldset>' +
       '<fieldset class="map-neighborhood-fieldset"><legend>ORIGIN NEIGHBORHOOD</legend><p class="map-filter-hint">Select a node as the origin. Incoming links are upstream; outgoing links are downstream.</p><div class="map-depth-controls"><label>Upstream<input type="number" min="0" max="10" step="1" value="3" data-upstream-depth aria-label="Maximum upstream relationship layers"></label><label>Downstream<input type="number" min="0" max="10" step="1" value="3" data-downstream-depth aria-label="Maximum downstream relationship layers"></label></div><p class="map-origin-status" data-origin-status role="status">Origin: no node selected</p><button type="button" class="map-action-button map-clear-origin" data-origin-clear disabled>Clear origin</button></fieldset>' +
-      '<details class="map-filter-list"><summary>RELATIONSHIP LABELS <span data-filter-count-for="relationship-labels">All labels</span></summary><p class="map-filter-hint">Labels available on relationships between graph nodes.</p><label class="map-filter-search"><span class="sr-only">Find relationship labels</span><input type="search" data-option-search="relationship-labels" placeholder="Find a relationship label" autocomplete="off"></label><div class="map-filter-options" data-relationship-labels></div></details>' +
-      '<details class="map-filter-list"><summary>NODE TABLES <span data-filter-count-for="node-tables">All tables</span></summary><p class="map-filter-hint">Filter graph nodes by their class or table.</p><label class="map-filter-search"><span class="sr-only">Find node tables</span><input type="search" data-option-search="node-tables" placeholder="Find a node table" autocomplete="off"></label><div class="map-filter-options" data-node-tables></div></details>' +
-      '<details class="map-filter-list"><summary>RELATIONSHIP SOURCE TABLES <span data-filter-count-for="relationship-tables">All tables</span></summary><p class="map-filter-hint">Filter graph relationships by the table that supplied each edge.</p><label class="map-filter-search"><span class="sr-only">Find relationship source tables</span><input type="search" data-option-search="relationship-tables" placeholder="Find a relationship source table" autocomplete="off"></label><div class="map-filter-options" data-relationship-tables></div></details>' +
+      '<details class="map-filter-list"><summary>RELATIONSHIP LABELS <span data-filter-count-for="relationship-labels">All labels</span></summary><p class="map-filter-hint">These filters narrow arrows. Choices follow product, domain, node table, and origin; this list ignores its own selection so labels can be combined.</p><label class="map-filter-search"><span class="sr-only">Find relationship labels</span><input type="search" data-option-search="relationship-labels" placeholder="Find a relationship label" autocomplete="off"></label><div class="map-filter-options" data-relationship-labels></div></details>' +
+      '<details class="map-filter-list"><summary>NODE TABLES <span data-filter-count-for="node-tables">All tables</span></summary><p class="map-filter-hint">Choices follow product, domain, relationship, and origin filters. This list ignores its own selection.</p><label class="map-filter-search"><span class="sr-only">Find node tables</span><input type="search" data-option-search="node-tables" placeholder="Find a node table" autocomplete="off"></label><div class="map-filter-options" data-node-tables></div></details>' +
+      '<details class="map-filter-list"><summary>RELATIONSHIP SOURCE TABLES <span data-filter-count-for="relationship-tables">All tables</span></summary><p class="map-filter-hint">These filters narrow arrows. Choices follow product, domain, node table, label, and origin; this list ignores its own selection.</p><label class="map-filter-search"><span class="sr-only">Find relationship source tables</span><input type="search" data-option-search="relationship-tables" placeholder="Find a relationship source table" autocomplete="off"></label><div class="map-filter-options" data-relationship-tables></div></details>' +
       '<label class="map-check-row"><input type="checkbox" data-context><span><strong>Show connected context</strong><small>Include directly connected records outside the selected filters.</small></span></label>' +
       '<label class="map-check-row"><input type="checkbox" data-labels><span><strong>Relationship labels</strong><small>Show labels and counts on directed edges.</small></span></label>' +
       '<div class="map-legend"><p class="map-field-label">NODE LEGEND</p><div class="map-legend-grid" data-legend></div><p class="map-legend-domain"><i></i> Service Delivery domain</p></div>' +
@@ -205,6 +205,65 @@
       if (summary) summary.textContent = label;
     });
   }
+  function countFilterValues(items, getValue) {
+    const counts = new Map();
+    items.forEach(function (item) {
+      const value = String(getValue(item) || '').trim();
+      if (value) counts.set(value, (counts.get(value) || 0) + 1);
+    });
+    return counts;
+  }
+  function renderFilterOptions(root, group, counts) {
+    const containers = {
+      'relationship-labels': '[data-relationship-labels]',
+      'node-tables': '[data-node-tables]',
+      'relationship-tables': '[data-relationship-tables]'
+    };
+    const optionSearch = root.querySelector('[data-option-search="' + group + '"]');
+    const container = root.querySelector(containers[group]);
+    const focused = document.activeElement;
+    const restoreFocus = focused && container.contains(focused) && focused.matches('input[type="checkbox"]')
+      ? focused.value : null;
+    const scrollTop = container.scrollTop;
+    const selected = filterSet(group);
+    selected.forEach(function (value) { if (!counts.has(value)) counts.set(value, 0); });
+    const labelFor = group === 'relationship-labels' ? function (value) { return value; } : tableLabel;
+    const entries = Array.from(counts.entries()).sort(function (a, b) {
+      return labelFor(a[0]).localeCompare(labelFor(b[0]));
+    });
+    container.innerHTML = entries.length ? entries.map(function (entry) {
+      const label = labelFor(entry[0]);
+      return filterOptionMarkup(group, entry[0], label, entry[1], group === 'relationship-labels' ? '' : entry[0]);
+    }).join('') : '<p class="map-filter-hint map-filter-empty">No options in this diagram view. Clear another filter to see more.</p>';
+    const query = optionSearch ? optionSearch.value.trim().toLowerCase() : '';
+    container.querySelectorAll('[data-filter-option]').forEach(function (option) {
+      option.hidden = Boolean(query && !option.dataset.searchText.includes(query));
+    });
+    container.scrollTop = scrollTop;
+    if (restoreFocus) {
+      const replacement = Array.from(container.querySelectorAll('input[type="checkbox"]')).find(function (input) {
+        return input.value === restoreFocus;
+      });
+      if (replacement) replacement.focus({ preventScroll: true });
+    }
+    root._filterOptionCounts = root._filterOptionCounts || {};
+    root._filterOptionCounts[group] = counts.size;
+  }
+  function updateDynamicFilterOptions(root, data, visible) {
+    const labelView = state.relationshipLabels.size ? viewData(data, 'relationship-labels') : visible;
+    const nodeTableView = state.nodeTables.size ? viewData(data, 'node-tables') : visible;
+    const relationshipTableView = state.relationshipTables.size ? viewData(data, 'relationship-tables') : visible;
+    renderFilterOptions(root, 'relationship-labels', countFilterValues(labelView.edges, function (edge) {
+      return edge.label || 'Relationship';
+    }));
+    renderFilterOptions(root, 'node-tables', countFilterValues(nodeTableView.visibleNodes, function (record) {
+      return record.className || record.table;
+    }));
+    renderFilterOptions(root, 'relationship-tables', countFilterValues(relationshipTableView.edges, function (edge) {
+      return edge.sourceRecord && edge.sourceRecord.table;
+    }));
+    updateFilterSummaries(root);
+  }
   function populateControls(root, data) {
     const productSelect = root.querySelector('[data-product]');
     productSelect.innerHTML = '<option value="all">All product views</option>' + data.productViews.map(function (view) {
@@ -217,37 +276,7 @@
       const color = DOMAIN_COLORS[domain.id] || '#74837b';
       return '<label class="map-domain-option" style="--domain-color:' + color + '"><input type="checkbox" value="' + escapeHtml(domain.id) + '"' + checked + '><span>' + escapeHtml(domain.label) + '</span><small>' + count + '</small></label>';
     }).join('');
-    const relationshipLabels = new Map();
-    const nodeTables = new Map();
-    const relationshipTables = new Map();
-    const graphNodeIds = new Set(data.records.filter(function (record) { return record.isGraphNode === true; }).map(function (record) { return record.id; }));
-    data.relationships.forEach(function (edge) {
-      if (!graphNodeIds.has(edge.source) || !graphNodeIds.has(edge.target)) return;
-      const label = String(edge.label || 'Relationship');
-      relationshipLabels.set(label, (relationshipLabels.get(label) || 0) + 1);
-      const table = String(edge.sourceRecord && edge.sourceRecord.table || '');
-      if (table) relationshipTables.set(table, (relationshipTables.get(table) || 0) + 1);
-    });
-    data.records.filter(function (record) { return record.isGraphNode === true; }).forEach(function (record) {
-      const table = String(record.className || record.table || '');
-      if (table) nodeTables.set(table, (nodeTables.get(table) || 0) + 1);
-    });
-    const sortedEntries = function (entries, labelFor) {
-      return Array.from(entries.entries()).sort(function (a, b) {
-        return labelFor(a[0]).localeCompare(labelFor(b[0]));
-      });
-    };
-    root.querySelector('[data-relationship-labels]').innerHTML = sortedEntries(relationshipLabels, function (value) { return value; })
-      .map(function (entry) { return filterOptionMarkup('relationship-labels', entry[0], entry[0], entry[1]); }).join('');
-    root.querySelector('[data-node-tables]').innerHTML = sortedEntries(nodeTables, tableLabel)
-      .map(function (entry) { return filterOptionMarkup('node-tables', entry[0], tableLabel(entry[0]), entry[1], entry[0]); }).join('');
-    root.querySelector('[data-relationship-tables]').innerHTML = sortedEntries(relationshipTables, tableLabel)
-      .map(function (entry) { return filterOptionMarkup('relationship-tables', entry[0], tableLabel(entry[0]), entry[1], entry[0]); }).join('');
-    root._filterOptionCounts = {
-      'relationship-labels': relationshipLabels.size,
-      'node-tables': nodeTables.size,
-      'relationship-tables': relationshipTables.size
-    };
+    root._filterOptionCounts = { 'relationship-labels': 0, 'node-tables': 0, 'relationship-tables': 0 };
     root.querySelector('[data-upstream-depth]').value = state.upstreamLayers;
     root.querySelector('[data-downstream-depth]').value = state.downstreamLayers;
     updateFilterSummaries(root);
@@ -277,20 +306,22 @@
     if (Number.isNaN(date.getTime())) return value;
     return new Intl.DateTimeFormat('en', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }).format(date) + ' UTC';
   }
-  function edgeMatches(edge) {
+  function edgeMatches(edge, excludedFilterGroup) {
     const metadata = edge.metadata || {};
     if (state.product !== 'all' && !normalizeList(metadata.productDomainIds).includes(state.product)) return false;
     if (state.domains.size && !normalizeList(metadata.csdmDomainIds).some(function (domain) { return state.domains.has(domain); })) return false;
-    if (state.relationshipLabels.size && !state.relationshipLabels.has(String(edge.label || 'Relationship'))) return false;
-    if (state.relationshipTables.size && !state.relationshipTables.has(String(edge.sourceRecord && edge.sourceRecord.table || ''))) return false;
+    const excludeLabels = excludedFilterGroup === 'relationship-labels' || excludedFilterGroup === 'relationship-filters';
+    const excludeTables = excludedFilterGroup === 'relationship-tables' || excludedFilterGroup === 'relationship-filters';
+    if (!excludeLabels && state.relationshipLabels.size && !state.relationshipLabels.has(String(edge.label || 'Relationship'))) return false;
+    if (!excludeTables && state.relationshipTables.size && !state.relationshipTables.has(String(edge.sourceRecord && edge.sourceRecord.table || ''))) return false;
     return true;
   }
-  function matchesRecord(record) {
+  function matchesRecord(record, excludedFilterGroup) {
     const metadata = record.metadata || {};
     if (state.product !== 'all' && !normalizeList(metadata.productDomainIds).includes(state.product)) return false;
     if (state.domains.size && !normalizeList(metadata.csdmDomainIds).some(function (domain) { return state.domains.has(domain); })) return false;
     const table = String(record.className || record.table || '');
-    if (state.nodeTables.size && !state.nodeTables.has(table)) return false;
+    if (excludedFilterGroup !== 'node-tables' && state.nodeTables.size && !state.nodeTables.has(table)) return false;
     return true;
   }
   function graphDistances(originId, adjacency, limit) {
@@ -308,25 +339,17 @@
     }
     return distances;
   }
-  function viewData(data) {
+  function viewData(data, excludedFilterGroup) {
     const graph = data.records.filter(function (record) { return record.isGraphNode === true; });
     const byId = new Map(data.records.map(function (record) { return [record.id, record]; }));
     const graphById = new Map(graph.map(function (record) { return [record.id, record]; }));
-    const baseNodes = graph.filter(matchesRecord);
+    const baseNodes = graph.filter(function (record) { return matchesRecord(record, excludedFilterGroup); });
     const baseIds = new Set(baseNodes.map(function (record) { return record.id; }));
     let strictIds = new Set(baseIds);
     let strictNodes = baseNodes;
     let strictEdges = data.relationships.filter(function (edge) {
-      return edgeMatches(edge) && baseIds.has(edge.source) && baseIds.has(edge.target);
+      return edgeMatches(edge, excludedFilterGroup) && baseIds.has(edge.source) && baseIds.has(edge.target);
     });
-    const relationshipFilterActive = state.relationshipLabels.size > 0 || state.relationshipTables.size > 0;
-    if (relationshipFilterActive) {
-      strictIds = new Set();
-      strictEdges.forEach(function (edge) { strictIds.add(edge.source); strictIds.add(edge.target); });
-      if (state.originId && baseIds.has(state.originId)) strictIds.add(state.originId);
-      strictNodes = baseNodes.filter(function (record) { return strictIds.has(record.id); });
-      strictEdges = strictEdges.filter(function (edge) { return strictIds.has(edge.source) && strictIds.has(edge.target); });
-    }
     let upstreamDistances = null;
     let downstreamDistances = null;
     let contextUpstreamDistances = null;
@@ -334,7 +357,10 @@
     const originAvailable = Boolean(state.originId && strictIds.has(state.originId));
     if (originAvailable) {
       const incoming = new Map(), outgoing = new Map();
-      strictEdges.forEach(function (edge) {
+      const neighborhoodEdges = data.relationships.filter(function (edge) {
+        return edgeMatches(edge, 'relationship-filters') && baseIds.has(edge.source) && baseIds.has(edge.target);
+      });
+      neighborhoodEdges.forEach(function (edge) {
         if (!outgoing.has(edge.source)) outgoing.set(edge.source, []);
         if (!incoming.has(edge.target)) incoming.set(edge.target, []);
         outgoing.get(edge.source).push(edge.target);
@@ -354,7 +380,7 @@
       if (originAvailable) {
         const incoming = new Map(), outgoing = new Map();
         const graphEdges = data.relationships.filter(function (edge) {
-          return edgeMatches(edge) && graphById.has(edge.source) && graphById.has(edge.target);
+          return edgeMatches(edge, excludedFilterGroup) && graphById.has(edge.source) && graphById.has(edge.target);
         });
         graphEdges.forEach(function (edge) {
           if (!outgoing.has(edge.source)) outgoing.set(edge.source, []);
@@ -372,7 +398,7 @@
         });
       } else {
         data.relationships.forEach(function (edge) {
-          if (!edgeMatches(edge)) return;
+          if (!edgeMatches(edge, excludedFilterGroup)) return;
           if (strictIds.has(edge.source) && graphById.has(edge.target) && !strictIds.has(edge.target)) contextIds.add(edge.target);
           if (strictIds.has(edge.target) && graphById.has(edge.source) && !strictIds.has(edge.source)) contextIds.add(edge.source);
         });
@@ -382,7 +408,7 @@
     contextIds.forEach(function (id) { finalIds.add(id); });
     const visibleNodes = graph.filter(function (record) { return finalIds.has(record.id); });
     const contextEdges = state.context ? data.relationships.filter(function (edge) {
-      return edgeMatches(edge) && finalIds.has(edge.source) && finalIds.has(edge.target) &&
+      return edgeMatches(edge, excludedFilterGroup) && finalIds.has(edge.source) && finalIds.has(edge.target) &&
         (contextIds.has(edge.source) || contextIds.has(edge.target)) && !strictEdges.includes(edge);
     }) : [];
     return { graph: graph, byId: byId, graphById: graphById, strictNodes: strictNodes,
@@ -895,6 +921,7 @@
     options = options || {};
     const data = root._data;
     const visible = viewData(data);
+    updateDynamicFilterOptions(root, data, visible);
     const layout = computeLayout(data, visible);
     drawSvg(root, data, visible, layout);
     updateCounts(root, data, visible, layout);
