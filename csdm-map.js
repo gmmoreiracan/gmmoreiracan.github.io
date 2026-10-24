@@ -77,6 +77,21 @@
   function recordLabel(record) {
     return asText(record && (record.name || (record.fields && (record.fields.name || record.fields.display_name)))) || 'Unnamed record';
   }
+  function tableLabel(table) {
+    const raw = String(table || '').trim();
+    const aliases = { cmdb_rel_ci: 'CI relationship', cmdb_rel_asset_ci: 'Asset / CI relationship' };
+    if (aliases[raw]) return aliases[raw];
+    let label = raw.replace(/^cmdb_ci_/, '').replace(/^cmdb_ai_/, 'AI ')
+      .replace(/^alm_ai_/, 'AI ').replace(/^sn_apm_di_/, '')
+      .replace(/^cmn_/, '').replace(/^enterprise_/, 'Enterprise ')
+      .replace(/^spm_/, 'Service portfolio ').replace(/^dpm_/, 'Portfolio ')
+      .replace(/^cmdb_rel_/, 'CI relationship ').replace(/^dintf_/, 'interface ')
+      .replace(/^api_/, 'API ').replace(/^ai_/, 'AI ')
+      .replace(/[_-]+/g, ' ').trim();
+    return label.replace(/\b(api|ai|mcp|http|oidc|sdlc|dvc|ci|m2m)\b/gi, function (word) {
+      return word.toUpperCase();
+    }).replace(/\b\w/g, function (character) { return character.toUpperCase(); });
+  }
   function classify(record) {
     const table = String(record.className || record.table || '').toLowerCase();
     if (/alm_ai_|cmdb_model|cmdb_ci_appl_ai_application|cmdb_ci_function_mcp/.test(table)) return 'ai';
@@ -113,7 +128,9 @@
   }
   function makeState(restoreLayout) {
     return { product: 'all', domains: new Set(), context: false, labels: false, showAll: false,
-      expanded: new Set(), selected: null, search: '', searchLimit: 20, viewBox: null, hasDrawn: false,
+      expanded: new Set(), selected: null, originId: null, upstreamLayers: 3, downstreamLayers: 3,
+      relationshipLabels: new Set(), nodeTables: new Set(), relationshipTables: new Set(),
+      search: '', searchLimit: 20, viewBox: null, hasDrawn: false,
       positions: restoreLayout ? readSavedPositions() : {} };
   }
   function loadData() {
@@ -130,16 +147,20 @@
   }
   function shellMarkup() {
     return '<div class="csdm-map-app" data-map-app>' +
-      '<div class="map-heading-row"><div><p class="map-eyebrow">A STATIC COMMON SERVICE DATA MODEL SNAPSHOT · GOODDAY FAMILY CHORES</p><h3>Explore the relationships.</h3><p class="map-deck">Filter by product or service-model domain, open a group to reveal its records, then drag cards to arrange the diagram. Connectors route around nearby records.</p></div><div class="map-heading-actions"><a class="map-open-standalone" href="./service-map.html" target="_blank" rel="noopener">Open in its own page <span aria-hidden="true">↗</span></a><span class="map-snapshot-pill" data-map-snapshot>Snapshot</span></div></div>' +
+      '<div class="map-heading-row"><div><p class="map-eyebrow">A STATIC COMMON SERVICE DATA MODEL SNAPSHOT · GOODDAY FAMILY CHORES</p><h3>Explore the relationships.</h3><p class="map-deck">Filter by product, service-model domain, relationship label, or table. Select a node as the origin to trace incoming and outgoing links up to three layers each; drag cards to arrange the diagram.</p></div><div class="map-heading-actions"><a class="map-open-standalone" href="./service-map.html" target="_blank" rel="noopener">Open in its own page <span aria-hidden="true">↗</span></a><span class="map-snapshot-pill" data-map-snapshot>Snapshot</span></div></div>' +
       '<div class="map-toolbar"><label class="map-search"><span class="sr-only">Search map records and supporting details</span><span aria-hidden="true">⌕</span><input type="search" data-map-search placeholder="Search records and details" autocomplete="off" aria-controls="map-search-results"><button type="button" class="map-clear-search" data-map-clear aria-label="Clear map search" hidden>×</button></label><div class="map-search-results" data-map-search-results id="map-search-results" aria-live="polite"></div><div class="map-view-count" data-map-count role="status" aria-live="polite"></div><div class="map-toolbar-actions"><button class="map-filter-open" type="button" data-filter-open aria-expanded="false" aria-controls="map-filters">Filters</button><button type="button" class="map-action-button" data-expand-all aria-pressed="false">Expand all groups</button><button type="button" class="map-action-button" data-auto-layout title="Restore the automatic diagram layout">Auto arrange</button><button type="button" class="map-action-button map-reset" data-reset>Reset view</button></div></div>' +
       '<div class="map-layout"><button class="map-scrim" data-map-scrim aria-label="Close filters" hidden></button>' +
       '<aside class="map-filters" id="map-filters" data-map-filters aria-label="Map filters" aria-hidden="true" inert><div class="map-panel-head"><div><p class="map-eyebrow">TUNE THE VIEW</p><h4>Filters</h4></div><button type="button" class="map-panel-close" data-filter-close aria-label="Close map filters">×</button></div>' +
       '<label class="map-field-label" for="map-product">PRODUCT VIEW</label><select id="map-product" class="map-product-select" data-product><option value="all">All product views</option></select>' +
       '<fieldset class="map-domain-fieldset"><legend>SERVICE MODEL DOMAINS <span>(combine tags)</span></legend><div class="map-domain-options" data-domains></div><p class="map-filter-hint">Records can belong to more than one domain. Selecting domains uses any matching tag.</p></fieldset>' +
+      '<fieldset class="map-neighborhood-fieldset"><legend>ORIGIN NEIGHBORHOOD</legend><p class="map-filter-hint">Select a node as the origin. Incoming links are upstream; outgoing links are downstream.</p><div class="map-depth-controls"><label>Upstream<input type="number" min="0" max="10" step="1" value="3" data-upstream-depth aria-label="Maximum upstream relationship layers"></label><label>Downstream<input type="number" min="0" max="10" step="1" value="3" data-downstream-depth aria-label="Maximum downstream relationship layers"></label></div><p class="map-origin-status" data-origin-status role="status">Origin: no node selected</p><button type="button" class="map-action-button map-clear-origin" data-origin-clear disabled>Clear origin</button></fieldset>' +
+      '<details class="map-filter-list"><summary>RELATIONSHIP LABELS <span data-filter-count-for="relationship-labels">All labels</span></summary><p class="map-filter-hint">Labels available on relationships between graph nodes.</p><label class="map-filter-search"><span class="sr-only">Find relationship labels</span><input type="search" data-option-search="relationship-labels" placeholder="Find a relationship label" autocomplete="off"></label><div class="map-filter-options" data-relationship-labels></div></details>' +
+      '<details class="map-filter-list"><summary>NODE TABLES <span data-filter-count-for="node-tables">All tables</span></summary><p class="map-filter-hint">Filter graph nodes by their class or table.</p><label class="map-filter-search"><span class="sr-only">Find node tables</span><input type="search" data-option-search="node-tables" placeholder="Find a node table" autocomplete="off"></label><div class="map-filter-options" data-node-tables></div></details>' +
+      '<details class="map-filter-list"><summary>RELATIONSHIP SOURCE TABLES <span data-filter-count-for="relationship-tables">All tables</span></summary><p class="map-filter-hint">Filter graph relationships by the table that supplied each edge.</p><label class="map-filter-search"><span class="sr-only">Find relationship source tables</span><input type="search" data-option-search="relationship-tables" placeholder="Find a relationship source table" autocomplete="off"></label><div class="map-filter-options" data-relationship-tables></div></details>' +
       '<label class="map-check-row"><input type="checkbox" data-context><span><strong>Show connected context</strong><small>Include directly connected records outside the selected filters.</small></span></label>' +
       '<label class="map-check-row"><input type="checkbox" data-labels><span><strong>Relationship labels</strong><small>Show labels and counts on directed edges.</small></span></label>' +
       '<div class="map-legend"><p class="map-field-label">NODE LEGEND</p><div class="map-legend-grid" data-legend></div><p class="map-legend-domain"><i></i> Service Delivery domain</p></div>' +
-      '</aside><section class="map-stage" aria-label="Interactive architecture diagram"><div class="map-canvas-topline"><span><i class="map-live-dot"></i> SERVICE RELATIONSHIP MAP</span><span data-map-layer-hint>Collapsed overview · select a domain to expand</span></div><div class="map-viewport" data-map-viewport tabindex="0" role="group" aria-label="Interactive architecture map. Drag record boxes to move them, drag open space to pan, and use the controls to zoom and fit."><svg class="map-svg" data-map-svg role="group" aria-label="Goodday service architecture diagram"><defs><marker id="csdm-arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z"></path></marker></defs><g data-edges></g><g data-nodes></g></svg></div><div class="map-zoom-bar"><span class="map-gesture-desktop">Drag cards to move · drag space to pan · Shift + arrows to nudge</span><span class="map-gesture-mobile">One finger to pan · pinch to zoom</span><div><button type="button" data-zoom-out aria-label="Zoom out">−</button><button type="button" data-zoom-in aria-label="Zoom in">+</button><button type="button" data-fit>Fit to view</button></div></div></section>' +
+      '</aside><section class="map-stage" aria-label="Interactive architecture diagram"><div class="map-canvas-topline"><span><i class="map-live-dot"></i> SERVICE RELATIONSHIP MAP</span><span data-map-layer-hint>Collapsed overview · select a domain to expand</span></div><div class="map-viewport" data-map-viewport tabindex="0" role="group" aria-label="Interactive architecture map. Drag record boxes to move them, drag open space to pan, and use the controls to zoom and fit."><svg class="map-svg" data-map-svg role="group" aria-label="Goodday service architecture diagram"><defs><marker id="csdm-arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z"></path></marker></defs><g data-edges></g><g data-nodes></g></svg></div><div class="map-zoom-bar"><span class="map-gesture-desktop">Drag cards to move · drag space to pan · Shift + arrows to nudge</span><span class="map-gesture-mobile">Pan on empty space · pinch to zoom</span><div><button type="button" data-zoom-out aria-label="Zoom out">−</button><button type="button" data-zoom-in aria-label="Zoom in">+</button><button type="button" data-fit>Fit to view</button></div></div></section>' +
       '<aside class="map-details" data-map-details aria-label="Selected record details" aria-hidden="true" inert><div class="map-panel-head"><div><p class="map-eyebrow">INSPECTOR</p><h4>Details</h4></div><button type="button" class="map-panel-close" data-detail-close aria-label="Close details">×</button></div><div class="map-detail-content" data-detail-content><div class="map-detail-empty"><span aria-hidden="true">↗</span><strong>Select a record or relationship</strong><p>Choose a map node or directed edge to inspect its source and evidence.</p></div></div></aside>' +
       '</div>' +
       '<section class="map-coverage" aria-labelledby="map-coverage-title"><div class="map-coverage-heading"><p class="map-eyebrow">WHAT THIS SNAPSHOT DOES NOT SHOW</p><h4 id="map-coverage-title">Coverage stays visible.</h4><p>The map reflects the exported records. Missing evidence remains a gap, not an inferred status.</p></div><article><span>01 / DELIVERY</span><strong>No change requests or delivery artifacts</strong><p>No change request records, pipeline executions, build artifacts, software bills of materials, test runs, or immutable release digests are in this snapshot.</p></article><article><span>02 / TECHNOLOGY RISK</span><strong>No risk or debt assessments</strong><p>There are no technical-risk or technical-debt assessment records, so no scores are shown.</p></article><article><span>03 / ARTIFICIAL INTELLIGENCE GOVERNANCE</span><strong>Documented assets, incomplete inventory</strong><p>No confirmed artificial intelligence prompt or Model Context Protocol server asset is present. Prompt-related information objects and the Goodday Model Context Protocol configuration item are included. The last Ollama loaded-model check was empty.</p></article></section>' +
@@ -165,6 +186,25 @@
       source.textContent = error.message + ' The page uses only its checked-in JSON asset; no live ServiceNow request is made.';
     });
   }
+  function filterSet(group) {
+    if (group === 'relationship-labels') return state.relationshipLabels;
+    if (group === 'node-tables') return state.nodeTables;
+    return state.relationshipTables;
+  }
+  function filterOptionMarkup(group, value, label, count, technical) {
+    const selected = filterSet(group).has(value) ? ' checked' : '';
+    const searchText = (label + ' ' + value + ' ' + (technical || '')).toLowerCase();
+    return '<label class="map-filter-choice" data-filter-option data-filter-group="' + escapeHtml(group) + '" data-search-text="' + escapeHtml(searchText) + '"><input type="checkbox" data-filter-group="' + escapeHtml(group) + '" value="' + escapeHtml(value) + '"' + selected + '><span><strong>' + escapeHtml(label) + '</strong>' + (technical ? '<small>' + escapeHtml(technical) + '</small>' : '') + '</span><small class="map-filter-choice-count">' + count + '</small></label>';
+  }
+  function updateFilterSummaries(root) {
+    ['relationship-labels', 'node-tables', 'relationship-tables'].forEach(function (group) {
+      const set = filterSet(group);
+      const total = root._filterOptionCounts && root._filterOptionCounts[group] || 0;
+      const label = set.size ? set.size + ' selected' : 'All ' + total;
+      const summary = root.querySelector('[data-filter-count-for="' + group + '"]');
+      if (summary) summary.textContent = label;
+    });
+  }
   function populateControls(root, data) {
     const productSelect = root.querySelector('[data-product]');
     productSelect.innerHTML = '<option value="all">All product views</option>' + data.productViews.map(function (view) {
@@ -177,6 +217,40 @@
       const color = DOMAIN_COLORS[domain.id] || '#74837b';
       return '<label class="map-domain-option" style="--domain-color:' + color + '"><input type="checkbox" value="' + escapeHtml(domain.id) + '"' + checked + '><span>' + escapeHtml(domain.label) + '</span><small>' + count + '</small></label>';
     }).join('');
+    const relationshipLabels = new Map();
+    const nodeTables = new Map();
+    const relationshipTables = new Map();
+    const graphNodeIds = new Set(data.records.filter(function (record) { return record.isGraphNode === true; }).map(function (record) { return record.id; }));
+    data.relationships.forEach(function (edge) {
+      if (!graphNodeIds.has(edge.source) || !graphNodeIds.has(edge.target)) return;
+      const label = String(edge.label || 'Relationship');
+      relationshipLabels.set(label, (relationshipLabels.get(label) || 0) + 1);
+      const table = String(edge.sourceRecord && edge.sourceRecord.table || '');
+      if (table) relationshipTables.set(table, (relationshipTables.get(table) || 0) + 1);
+    });
+    data.records.filter(function (record) { return record.isGraphNode === true; }).forEach(function (record) {
+      const table = String(record.className || record.table || '');
+      if (table) nodeTables.set(table, (nodeTables.get(table) || 0) + 1);
+    });
+    const sortedEntries = function (entries, labelFor) {
+      return Array.from(entries.entries()).sort(function (a, b) {
+        return labelFor(a[0]).localeCompare(labelFor(b[0]));
+      });
+    };
+    root.querySelector('[data-relationship-labels]').innerHTML = sortedEntries(relationshipLabels, function (value) { return value; })
+      .map(function (entry) { return filterOptionMarkup('relationship-labels', entry[0], entry[0], entry[1]); }).join('');
+    root.querySelector('[data-node-tables]').innerHTML = sortedEntries(nodeTables, tableLabel)
+      .map(function (entry) { return filterOptionMarkup('node-tables', entry[0], tableLabel(entry[0]), entry[1], entry[0]); }).join('');
+    root.querySelector('[data-relationship-tables]').innerHTML = sortedEntries(relationshipTables, tableLabel)
+      .map(function (entry) { return filterOptionMarkup('relationship-tables', entry[0], tableLabel(entry[0]), entry[1], entry[0]); }).join('');
+    root._filterOptionCounts = {
+      'relationship-labels': relationshipLabels.size,
+      'node-tables': nodeTables.size,
+      'relationship-tables': relationshipTables.size
+    };
+    root.querySelector('[data-upstream-depth]').value = state.upstreamLayers;
+    root.querySelector('[data-downstream-depth]').value = state.downstreamLayers;
+    updateFilterSummaries(root);
     root.querySelector('[data-context]').checked = state.context;
     root.querySelector('[data-labels]').checked = state.labels;
     const mobile = window.matchMedia('(max-width: 900px)').matches;
@@ -207,40 +281,115 @@
     const metadata = edge.metadata || {};
     if (state.product !== 'all' && !normalizeList(metadata.productDomainIds).includes(state.product)) return false;
     if (state.domains.size && !normalizeList(metadata.csdmDomainIds).some(function (domain) { return state.domains.has(domain); })) return false;
+    if (state.relationshipLabels.size && !state.relationshipLabels.has(String(edge.label || 'Relationship'))) return false;
+    if (state.relationshipTables.size && !state.relationshipTables.has(String(edge.sourceRecord && edge.sourceRecord.table || ''))) return false;
     return true;
   }
   function matchesRecord(record) {
     const metadata = record.metadata || {};
     if (state.product !== 'all' && !normalizeList(metadata.productDomainIds).includes(state.product)) return false;
     if (state.domains.size && !normalizeList(metadata.csdmDomainIds).some(function (domain) { return state.domains.has(domain); })) return false;
+    const table = String(record.className || record.table || '');
+    if (state.nodeTables.size && !state.nodeTables.has(table)) return false;
     return true;
+  }
+  function graphDistances(originId, adjacency, limit) {
+    const distances = new Map([[originId, 0]]);
+    const queue = [originId];
+    for (let index = 0; index < queue.length; index += 1) {
+      const current = queue[index];
+      const depth = distances.get(current);
+      if (depth >= limit) continue;
+      (adjacency.get(current) || []).forEach(function (next) {
+        if (distances.has(next)) return;
+        distances.set(next, depth + 1);
+        queue.push(next);
+      });
+    }
+    return distances;
   }
   function viewData(data) {
     const graph = data.records.filter(function (record) { return record.isGraphNode === true; });
     const byId = new Map(data.records.map(function (record) { return [record.id, record]; }));
     const graphById = new Map(graph.map(function (record) { return [record.id, record]; }));
-    const strictNodes = graph.filter(matchesRecord);
-    const strictIds = new Set(strictNodes.map(function (record) { return record.id; }));
-    const strictEdges = data.relationships.filter(function (edge) {
-      return edgeMatches(edge) && strictIds.has(edge.source) && strictIds.has(edge.target);
+    const baseNodes = graph.filter(matchesRecord);
+    const baseIds = new Set(baseNodes.map(function (record) { return record.id; }));
+    let strictIds = new Set(baseIds);
+    let strictNodes = baseNodes;
+    let strictEdges = data.relationships.filter(function (edge) {
+      return edgeMatches(edge) && baseIds.has(edge.source) && baseIds.has(edge.target);
     });
+    const relationshipFilterActive = state.relationshipLabels.size > 0 || state.relationshipTables.size > 0;
+    if (relationshipFilterActive) {
+      strictIds = new Set();
+      strictEdges.forEach(function (edge) { strictIds.add(edge.source); strictIds.add(edge.target); });
+      if (state.originId && baseIds.has(state.originId)) strictIds.add(state.originId);
+      strictNodes = baseNodes.filter(function (record) { return strictIds.has(record.id); });
+      strictEdges = strictEdges.filter(function (edge) { return strictIds.has(edge.source) && strictIds.has(edge.target); });
+    }
+    let upstreamDistances = null;
+    let downstreamDistances = null;
+    let contextUpstreamDistances = null;
+    let contextDownstreamDistances = null;
+    const originAvailable = Boolean(state.originId && strictIds.has(state.originId));
+    if (originAvailable) {
+      const incoming = new Map(), outgoing = new Map();
+      strictEdges.forEach(function (edge) {
+        if (!outgoing.has(edge.source)) outgoing.set(edge.source, []);
+        if (!incoming.has(edge.target)) incoming.set(edge.target, []);
+        outgoing.get(edge.source).push(edge.target);
+        incoming.get(edge.target).push(edge.source);
+      });
+      upstreamDistances = graphDistances(state.originId, incoming, state.upstreamLayers);
+      downstreamDistances = graphDistances(state.originId, outgoing, state.downstreamLayers);
+      const neighborhoodIds = new Set([state.originId]);
+      upstreamDistances.forEach(function (_distance, id) { neighborhoodIds.add(id); });
+      downstreamDistances.forEach(function (_distance, id) { neighborhoodIds.add(id); });
+      strictIds = neighborhoodIds;
+      strictNodes = strictNodes.filter(function (record) { return strictIds.has(record.id); });
+      strictEdges = strictEdges.filter(function (edge) { return strictIds.has(edge.source) && strictIds.has(edge.target); });
+    }
     const contextIds = new Set();
     if (state.context && strictIds.size) {
-      data.relationships.forEach(function (edge) {
-        if (strictIds.has(edge.source) && graphById.has(edge.target) && !strictIds.has(edge.target)) contextIds.add(edge.target);
-        if (strictIds.has(edge.target) && graphById.has(edge.source) && !strictIds.has(edge.source)) contextIds.add(edge.source);
-      });
+      if (originAvailable) {
+        const incoming = new Map(), outgoing = new Map();
+        const graphEdges = data.relationships.filter(function (edge) {
+          return edgeMatches(edge) && graphById.has(edge.source) && graphById.has(edge.target);
+        });
+        graphEdges.forEach(function (edge) {
+          if (!outgoing.has(edge.source)) outgoing.set(edge.source, []);
+          if (!incoming.has(edge.target)) incoming.set(edge.target, []);
+          outgoing.get(edge.source).push(edge.target);
+          incoming.get(edge.target).push(edge.source);
+        });
+        contextUpstreamDistances = graphDistances(state.originId, incoming, state.upstreamLayers);
+        contextDownstreamDistances = graphDistances(state.originId, outgoing, state.downstreamLayers);
+        graphEdges.forEach(function (edge) {
+          if (strictIds.has(edge.source) && !strictIds.has(edge.target) &&
+              (contextUpstreamDistances.has(edge.target) || contextDownstreamDistances.has(edge.target))) contextIds.add(edge.target);
+          if (strictIds.has(edge.target) && !strictIds.has(edge.source) &&
+              (contextUpstreamDistances.has(edge.source) || contextDownstreamDistances.has(edge.source))) contextIds.add(edge.source);
+        });
+      } else {
+        data.relationships.forEach(function (edge) {
+          if (!edgeMatches(edge)) return;
+          if (strictIds.has(edge.source) && graphById.has(edge.target) && !strictIds.has(edge.target)) contextIds.add(edge.target);
+          if (strictIds.has(edge.target) && graphById.has(edge.source) && !strictIds.has(edge.source)) contextIds.add(edge.source);
+        });
+      }
     }
     const finalIds = new Set(strictIds);
     contextIds.forEach(function (id) { finalIds.add(id); });
     const visibleNodes = graph.filter(function (record) { return finalIds.has(record.id); });
     const contextEdges = state.context ? data.relationships.filter(function (edge) {
-      return finalIds.has(edge.source) && finalIds.has(edge.target) &&
+      return edgeMatches(edge) && finalIds.has(edge.source) && finalIds.has(edge.target) &&
         (contextIds.has(edge.source) || contextIds.has(edge.target)) && !strictEdges.includes(edge);
     }) : [];
     return { graph: graph, byId: byId, graphById: graphById, strictNodes: strictNodes,
       strictIds: strictIds, contextIds: contextIds, visibleNodes: visibleNodes,
-      edges: strictEdges.concat(contextEdges) };
+      edges: strictEdges.concat(contextEdges), originAvailable: originAvailable,
+      upstreamDistances: upstreamDistances, downstreamDistances: downstreamDistances,
+      contextUpstreamDistances: contextUpstreamDistances, contextDownstreamDistances: contextDownstreamDistances };
   }
   function spiralPosition(domain, index, domainIndex) {
     const config = DOMAIN_LAYOUT[domain] || { anchor: { x: WIDTH / 2, y: HEIGHT / 2 } };
@@ -249,6 +398,72 @@
     const angle = index * 2.399963229728653 + domainIndex * .73;
     const radius = 82 * Math.sqrt(index);
     return { x: anchor.x + Math.cos(angle) * radius, y: anchor.y + Math.sin(angle) * radius * .72 };
+  }
+  function neighborhoodLayout(data, visible) {
+    const originId = state.originId;
+    const center = { x: WIDTH / 2, y: HEIGHT / 2 };
+    const positions = new Map([[originId, center]]);
+    const groupedRows = new Map();
+    function addToRow(side, depth, record) {
+      const key = side + ':' + depth;
+      if (!groupedRows.has(key)) groupedRows.set(key, { side: side, depth: depth, records: [] });
+      groupedRows.get(key).records.push(record);
+    }
+    visible.visibleNodes.forEach(function (record) {
+      if (record.id === originId) return;
+      const upstream = (visible.upstreamDistances && visible.upstreamDistances.get(record.id)) ??
+        (visible.contextUpstreamDistances && visible.contextUpstreamDistances.get(record.id));
+      const downstream = (visible.downstreamDistances && visible.downstreamDistances.get(record.id)) ??
+        (visible.contextDownstreamDistances && visible.contextDownstreamDistances.get(record.id));
+      let side, depth;
+      if (upstream != null && (downstream == null || upstream <= downstream)) {
+        side = 'upstream'; depth = upstream;
+      } else if (downstream != null) {
+        side = 'downstream'; depth = downstream;
+      } else {
+        const contextEdge = visible.edges.find(function (edge) {
+          return (edge.source === record.id && edge.target !== record.id) || (edge.target === record.id && edge.source !== record.id);
+        });
+        const neighborId = contextEdge && (contextEdge.source === record.id ? contextEdge.target : contextEdge.source);
+        const neighborUpstream = neighborId && visible.upstreamDistances && visible.upstreamDistances.get(neighborId);
+        const neighborDownstream = neighborId && visible.downstreamDistances && visible.downstreamDistances.get(neighborId);
+        if (neighborUpstream != null && (neighborDownstream == null || neighborUpstream <= neighborDownstream)) {
+          side = 'upstream'; depth = neighborUpstream + 1;
+        } else {
+          side = 'downstream'; depth = neighborDownstream == null ? 1 : neighborDownstream + 1;
+        }
+      }
+      addToRow(side, Math.max(1, depth), record);
+    });
+    const rowGap = NODE_H + 116;
+    const rows = [{ side: 'origin', depth: 0, y: center.y, label: 'ORIGIN · ' + recordLabel(visible.graphById.get(originId) || { name: 'Selected node' }), count: 1 }];
+    groupedRows.forEach(function (row) {
+      row.records.sort(function (a, b) {
+        const domainOrder = displayDomain(a, data).localeCompare(displayDomain(b, data));
+        return domainOrder || recordLabel(a).localeCompare(recordLabel(b));
+      });
+      const y = center.y + (row.side === 'upstream' ? -1 : 1) * row.depth * rowGap;
+      const spacing = NODE_W + NODE_GAP;
+      const firstX = center.x - ((row.records.length - 1) * spacing) / 2;
+      row.records.forEach(function (record, index) {
+        const saved = state.positions[record.id];
+        positions.set(record.id, saved && Number.isFinite(saved.x) && Number.isFinite(saved.y)
+          ? { x: saved.x, y: saved.y }
+          : { x: firstX + index * spacing, y: y });
+      });
+      rows.push({ side: row.side, depth: row.depth, y: y,
+        label: (row.side === 'upstream' ? 'UPSTREAM · ' : 'DOWNSTREAM · ') + row.depth,
+        count: row.records.length });
+    });
+    rows.sort(function (a, b) { return a.y - b.y; });
+    const items = Array.from(positions.entries()).map(function (entry) {
+      return { x: entry[1].x, y: entry[1].y, id: entry[0] };
+    });
+    const left = Math.min.apply(null, items.map(function (item) { return item.x - NODE_W / 2; }));
+    const top = Math.min.apply(null, items.map(function (item) { return item.y - NODE_H / 2; }));
+    const right = Math.max.apply(null, items.map(function (item) { return item.x + NODE_W / 2; }));
+    const bottom = Math.max.apply(null, items.map(function (item) { return item.y + NODE_H / 2; }));
+    return { positions: positions, rows: rows, bounds: { x: left - 24, y: top - 45, w: right - left + 48, h: bottom - top + 75 } };
   }
   function resolveCollisions(vertices, pinnedId, iterations, allowGroupMove) {
     const items = Array.from(vertices.values());
@@ -286,6 +501,7 @@
     });
   }
   function computeLayout(data, visible) {
+    const originLayout = visible.originAvailable ? neighborhoodLayout(data, visible) : null;
     const domainRecords = new Map();
     visible.visibleNodes.forEach(function (record) {
       const domain = displayDomain(record, data);
@@ -300,7 +516,7 @@
     const domainIndex = new Map();
     Object.keys(DOMAIN_LAYOUT).forEach(function (domain, index) { domainIndex.set(domain, index); });
     domainRecords.forEach(function (records, domain) {
-      const expanded = state.showAll || state.expanded.has(domain);
+      const expanded = state.showAll || !!originLayout || state.expanded.has(domain);
       const config = DOMAIN_LAYOUT[domain] || { x: WIDTH / 2, y: HEIGHT / 2, w: 470, h: 154, anchor: { x: WIDTH / 2, y: HEIGHT / 2 } };
       const accent = DOMAIN_COLORS[domain] || '#74837b';
       const savedAnchor = state.positions['domain:' + domain];
@@ -322,17 +538,19 @@
         const saved = state.positions[record.id];
         const position = saved && Number.isFinite(saved.x) && Number.isFinite(saved.y)
           ? { x: saved.x, y: saved.y }
-          : spiralPosition(domain, recordIndex, index);
+          : (originLayout ? originLayout.positions.get(record.id) : spiralPosition(domain, recordIndex, index));
         const vertex = { id: record.id, kind: 'record', record: record, domain: domain, accent: accent,
           position: { x: position.x, y: position.y, w: NODE_W, h: NODE_H } };
         vertices.set(vertex.id, vertex);
         vertexByRecord.set(record.id, vertex);
       });
-      vertices.set('domain-label:' + domain, { id: 'domain-label:' + domain, kind: 'domainLabel', domain: domain,
-        position: { x: anchor.x, y: anchor.y - 128, w: 320, h: 44 } });
+      if (!originLayout) {
+        vertices.set('domain-label:' + domain, { id: 'domain-label:' + domain, kind: 'domainLabel', domain: domain,
+          position: { x: anchor.x, y: anchor.y - 128, w: 320, h: 44 } });
+      }
       domainBoxes.set(domain, { domain: domain, records: records, expanded: true, anchor: anchor, x: 0, y: 0, w: 0, h: 0 });
     });
-    resolveCollisions(vertices, null, 54);
+    if (!originLayout) resolveCollisions(vertices, null, 54);
     vertices.forEach(function (vertex) {
       if (vertex.record) recordPositions.set(vertex.record.id, vertex.position);
     });
@@ -374,7 +592,9 @@
     const maxY = points.length ? Math.max(HEIGHT, Math.max.apply(null, points.map(function (item) { return item.position.y + item.position.h / 2 + 120; }))) : HEIGHT;
     return { width: maxX, height: maxY, domainBoxes: domainBoxes, domainRecords: domainRecords,
       vertices: vertices, vertexByRecord: vertexByRecord, recordPositions: recordPositions,
-      edges: Array.from(edgeGroups.values()), internalCounts: internalCounts };
+      edges: Array.from(edgeGroups.values()), internalCounts: internalCounts,
+      neighborhoodBounds: originLayout && originLayout.bounds,
+      neighborhoodRows: originLayout && originLayout.rows };
   }
   function nodeTypeClass(record) { return 'kind-' + classify(record); }
   function tspanText(value, max, maxLines) {
@@ -605,17 +825,28 @@
     root._edgeSelections = new Map();
     const boxes = Array.from(layout.domainBoxes.entries());
     let layerMarkup = '';
-    ZONES.forEach(function (zone) {
-      if (!zone.domains.some(function (domain) { return layout.domainBoxes.has(domain); })) return;
-      layerMarkup += '<g class="map-zone"><path class="map-zone-rule" d="M ' + zone.x + ' ' + (zone.y + 12) + ' H ' + (zone.x + zone.w) + '"></path><text class="map-layer-label" x="' + zone.x + '" y="' + zone.y + '">' + escapeHtml(zone.label) + '</text><text class="map-layer-hint" x="' + zone.x + '" y="' + (zone.y + 30) + '">' + escapeHtml(zone.hint) + '</text></g>';
-    });
+    if (layout.neighborhoodRows) {
+      layout.neighborhoodRows.forEach(function (row) {
+        const label = row.label + (row.side === 'origin' ? '' : ' · ' + row.count + ' ' + (row.count === 1 ? 'node' : 'nodes'));
+        layerMarkup += '<g class="map-neighborhood-row' + (row.side === 'origin' ? ' is-origin' : '') + '"><path class="map-neighborhood-rule" d="M ' + layout.neighborhoodBounds.x + ' ' + (row.y + NODE_H / 2 + 24) + ' H ' + (layout.neighborhoodBounds.x + layout.neighborhoodBounds.w) + '"></path><text class="map-neighborhood-layer" x="' + (WIDTH / 2) + '" y="' + (row.y - NODE_H / 2 - 12) + '" text-anchor="middle">' + escapeHtml(label) + '</text></g>';
+      });
+    } else {
+      ZONES.forEach(function (zone) {
+        if (!zone.domains.some(function (domain) { return layout.domainBoxes.has(domain); })) return;
+        layerMarkup += '<g class="map-zone"><path class="map-zone-rule" d="M ' + zone.x + ' ' + (zone.y + 12) + ' H ' + (zone.x + zone.w) + '"></path><text class="map-layer-label" x="' + zone.x + '" y="' + zone.y + '">' + escapeHtml(zone.label) + '</text><text class="map-layer-hint" x="' + zone.x + '" y="' + (zone.y + 30) + '">' + escapeHtml(zone.hint) + '</text></g>';
+      });
+    }
     let edgeMarkup = '';
     layout.edges.forEach(function (edgeGroup) {
       root._edgeSelections.set(edgeGroup.id, edgeGroup);
       edgeMarkup += renderEdge(edgeGroup, layout);
     });
     let nodeMarkup = layerMarkup;
-    boxes.forEach(function (entry) { nodeMarkup += renderDomainBox(entry[0], entry[1], data, layout, visible); });
+    if (layout.neighborhoodRows) {
+      layout.vertices.forEach(function (vertex) { if (vertex.record) nodeMarkup += renderRecordNode(vertex); });
+    } else {
+      boxes.forEach(function (entry) { nodeMarkup += renderDomainBox(entry[0], entry[1], data, layout, visible); });
+    }
     if (!visible.visibleNodes.length) {
       nodeMarkup += '<text class="map-empty-text" x="' + (WIDTH / 2) + '" y="320" text-anchor="middle">No map nodes match these filters.</text><text class="map-empty-hint" x="' + (WIDTH / 2) + '" y="350" text-anchor="middle">Clear a domain filter or choose another product view.</text>';
     }
@@ -627,7 +858,10 @@
     svg.setAttribute('viewBox', [state.viewBox.x, state.viewBox.y, state.viewBox.w, state.viewBox.h].join(' '));
     svg.setAttribute('width', layout.width);
     svg.setAttribute('height', layout.height);
-    svg.setAttribute('aria-label', 'Goodday service map with ' + visible.strictNodes.length + ' matching graph nodes and ' + layout.edges.length + ' visible relationship groups.');
+    const origin = state.originId && data.records.find(function (record) { return record.id === state.originId; });
+    svg.setAttribute('aria-label', layout.neighborhoodRows
+      ? 'Relationship neighborhood around ' + recordLabel(origin || { name: 'selected node' }) + ' with ' + visible.strictNodes.length + ' matching graph nodes and ' + layout.edges.length + ' visible relationship groups.'
+      : 'Goodday service map with ' + visible.strictNodes.length + ' matching graph nodes and ' + layout.edges.length + ' visible relationship groups.');
     state.hasDrawn = true;
   }
   function updateCounts(root, data, visible, layout) {
@@ -636,9 +870,20 @@
     const edgeCount = visible.edges.length;
     const text = shown + ' of ' + data.export.counts.graphNodes + ' graph nodes · ' + edgeCount + ' directed relationships' + (contextCount ? ' · ' + contextCount + ' context nodes' : '') + ' · ' + (data.records.length - data.export.counts.graphNodes) + ' supporting records searchable';
     root.querySelector('[data-map-count]').textContent = text;
-    root.querySelector('[data-map-layer-hint]').textContent = state.showAll ? 'All matching records expanded' : (state.expanded.size ? state.expanded.size + ' domain group' + (state.expanded.size === 1 ? '' : 's') + ' expanded' : 'Collapsed overview · select a domain to expand');
+    const originRecord = state.originId && data.records.find(function (record) { return record.id === state.originId; });
+    root.querySelector('[data-map-layer-hint]').textContent = layout.neighborhoodRows
+      ? 'Neighborhood around ' + recordLabel(originRecord) + ' · ' + state.upstreamLayers + ' upstream / ' + state.downstreamLayers + ' downstream layers'
+      : (state.originId && !visible.originAvailable ? 'Origin hidden by filters · choose another node or clear the origin' : (state.showAll ? 'All matching records expanded' : (state.expanded.size ? state.expanded.size + ' domain group' + (state.expanded.size === 1 ? '' : 's') + ' expanded' : 'Collapsed overview · select a domain to expand')));
     root.querySelector('[data-expand-all]').textContent = state.showAll ? 'Collapse overview' : 'Expand all groups';
     root.querySelector('[data-expand-all]').setAttribute('aria-pressed', String(state.showAll));
+    const originStatus = root.querySelector('[data-origin-status]');
+    originStatus.textContent = !originRecord ? 'Origin: select a node' : (visible.originAvailable
+      ? 'Origin: ' + recordLabel(originRecord)
+      : 'Origin hidden by the current filters: ' + recordLabel(originRecord));
+    root.querySelector('[data-origin-clear]').disabled = !state.originId;
+    root.querySelector('[data-upstream-depth]').value = state.upstreamLayers;
+    root.querySelector('[data-downstream-depth]').value = state.downstreamLayers;
+    updateFilterSummaries(root);
     const product = root.querySelector('[data-product]');
     if (product.value !== state.product) product.value = state.product;
     root.querySelector('[data-context]').checked = state.context;
@@ -662,6 +907,10 @@
   function fitView(root, initial) {
     if (!root || !root._layout) return;
     const layout = root._layout;
+    if (layout.neighborhoodBounds) {
+      fitBox(root, layout.neighborhoodBounds, 40);
+      return;
+    }
     const boxes = Array.from(layout.domainBoxes.values());
     if (initial && window.matchMedia('(max-width: 600px)').matches) {
       const firstEntry = Array.from(layout.domainBoxes.entries()).find(function (entry) { return entry[0] === 'ideation_strategy'; }) || Array.from(layout.domainBoxes.entries())[0];
@@ -747,7 +996,7 @@
     vertex.position.x += dx; vertex.position.y += dy;
     resolveCollisions(root._layout.vertices, itemId, 48, vertex.kind === 'domain');
     saveVisiblePositions(root);
-    if (vertex.record) state.selected = { kind: 'record', id: itemId };
+    if (vertex.record) { state.selected = { kind: 'record', id: itemId }; state.originId = itemId; }
     else if (vertex.domain) {
       const box = root._layout.domainBoxes.get(vertex.domain);
       if (box && box.expanded) box.anchor = vertex.position;
@@ -758,17 +1007,51 @@
     const svg = root.querySelector('[data-map-svg]');
     const viewport = root.querySelector('[data-map-viewport]');
     root.querySelector('[data-product]').addEventListener('change', function (event) {
-      state.product = event.target.value; state.expanded.clear(); state.showAll = false; state.selected = null; state.viewBox = null; setDetails(root, false); draw(root, { fit: true });
+      state.product = event.target.value; state.expanded.clear(); state.showAll = false; state.selected = null; state.originId = null; state.viewBox = null; setDetails(root, false); draw(root, { fit: true });
     });
     root.querySelector('[data-domains]').addEventListener('change', function (event) {
       if (event.target.type !== 'checkbox') return;
       if (event.target.checked) state.domains.add(event.target.value); else state.domains.delete(event.target.value);
-      state.expanded.clear(); state.showAll = false; state.selected = null; state.viewBox = null; setDetails(root, false); draw(root, { fit: true });
+      state.expanded.clear(); state.showAll = false; state.selected = null; state.originId = null; state.viewBox = null; setDetails(root, false); draw(root, { fit: true });
+    });
+    root.querySelector('[data-map-filters]').addEventListener('change', function (event) {
+      const group = event.target.dataset.filterGroup;
+      if (!group || event.target.type !== 'checkbox') return;
+      const values = filterSet(group);
+      if (event.target.checked) values.add(event.target.value); else values.delete(event.target.value);
+      if (state.selected && state.selected.kind === 'edge') state.selected = null;
+      state.viewBox = null;
+      draw(root, { fit: true });
+    });
+    root.querySelectorAll('[data-option-search]').forEach(function (input) {
+      input.addEventListener('input', function () {
+        const group = input.dataset.optionSearch;
+        const query = input.value.trim().toLowerCase();
+        root.querySelectorAll('[data-filter-option][data-filter-group="' + group + '"]').forEach(function (option) {
+          option.hidden = query && !option.dataset.searchText.includes(query);
+        });
+      });
+    });
+    root.querySelector('[data-upstream-depth]').addEventListener('change', function (event) {
+      const parsed = Number.parseInt(event.target.value, 10);
+      state.upstreamLayers = Math.max(0, Math.min(10, Number.isFinite(parsed) ? parsed : 3));
+      event.target.value = state.upstreamLayers;
+      if (state.originId) { state.viewBox = null; draw(root, { fit: true }); }
+    });
+    root.querySelector('[data-downstream-depth]').addEventListener('change', function (event) {
+      const parsed = Number.parseInt(event.target.value, 10);
+      state.downstreamLayers = Math.max(0, Math.min(10, Number.isFinite(parsed) ? parsed : 3));
+      event.target.value = state.downstreamLayers;
+      if (state.originId) { state.viewBox = null; draw(root, { fit: true }); }
+    });
+    root.querySelector('[data-origin-clear]').addEventListener('click', function () {
+      state.originId = null; state.selected = null; state.expanded.clear(); state.showAll = false; state.viewBox = null;
+      setDetails(root, false); draw(root, { fit: true });
     });
     root.querySelector('[data-context]').addEventListener('change', function (event) { state.context = event.target.checked; draw(root, { fit: true }); });
     root.querySelector('[data-labels]').addEventListener('change', function (event) { state.labels = event.target.checked; draw(root); });
     root.querySelector('[data-expand-all]').addEventListener('click', function () {
-      state.showAll = !state.showAll; state.expanded.clear(); state.selected = null; state.viewBox = null; setDetails(root, false); draw(root, { fit: true });
+      state.showAll = !state.showAll; state.expanded.clear(); state.selected = null; state.originId = null; state.viewBox = null; setDetails(root, false); draw(root, { fit: true });
     });
     root.querySelector('[data-auto-layout]').addEventListener('click', function () {
       state.positions = {};
@@ -829,6 +1112,7 @@
         const domain = displayDomain(record, root._data);
         state.expanded.add(domain);
         state.selected = { kind: 'record', id: record.id };
+        state.originId = record.id;
         draw(root, { focusRecord: record.id });
         setDetails(root, true);
       } else {
@@ -852,6 +1136,7 @@
       const recordNode = event.target.closest('[data-node-id]');
       if (recordNode) {
         state.selected = { kind: 'record', id: recordNode.dataset.nodeId };
+        state.originId = recordNode.dataset.nodeId;
         draw(root, { focusRecord: recordNode.dataset.nodeId });
         setDetails(root, true);
         return;
@@ -881,7 +1166,7 @@
       if (!node) return;
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
-        state.selected = { kind: 'record', id: node.dataset.nodeId }; draw(root, { focusRecord: node.dataset.nodeId });
+        state.selected = { kind: 'record', id: node.dataset.nodeId }; state.originId = node.dataset.nodeId; draw(root, { focusRecord: node.dataset.nodeId });
         setDetails(root, true);
       } else if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
         const next = keyboardNeighbor(root, node.dataset.nodeId, event.key);
@@ -1054,6 +1339,7 @@
           root._suppressNextClick = true;
           window.setTimeout(function () { root._suppressNextClick = false; }, 0);
           state.selected = { kind: 'record', id: drag.vertexId };
+          state.originId = drag.vertexId;
           draw(root, { focusRecord: drag.vertexId });
           setDetails(root, true);
         } else if (event.type !== 'pointercancel' && drag.vertex.domain) {
@@ -1085,6 +1371,7 @@
   }
   function toggleDomain(root, domain) {
     state.showAll = false;
+    state.originId = null;
     if (state.expanded.has(domain)) state.expanded.delete(domain); else state.expanded.add(domain);
     state.selected = { kind: 'domain', id: domain };
     state.viewBox = null;
