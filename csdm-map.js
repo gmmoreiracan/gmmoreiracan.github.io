@@ -136,7 +136,7 @@
   function loadData() {
     if (cachedData) return Promise.resolve(cachedData);
     if (!loadingData) {
-      loadingData = fetch(new URL(DATA_URL, document.baseURI), { credentials: 'same-origin' })
+      loadingData = fetch(new URL(DATA_URL, document.baseURI), { credentials: 'same-origin', cache: 'reload' })
         .then(function (response) {
           if (!response.ok) throw new Error('The static map snapshot could not be loaded (' + response.status + ').');
           return response.json();

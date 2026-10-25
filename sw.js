@@ -1,5 +1,5 @@
 'use strict';
-const CACHE_NAME = 'goodday-public-book-v29';
+const CACHE_NAME = 'goodday-public-book-v32';
 const SHELL = [
   './', './index.html', './styles.css', './analytics.js', './csdm-map.js', './service-map-page.js', './service-map.html', './app.js', './manifest.webmanifest', './favicon.svg',
   './output/pdf/goodday-book.pdf',
@@ -40,7 +40,10 @@ const SHELL = [
 ];
 const NETWORK_FIRST_PATHS = new Set([
   new URL('./books/goodday-book.md', self.registration.scope).pathname,
-  new URL('./output/pdf/goodday-book.pdf', self.registration.scope).pathname
+  new URL('./output/pdf/goodday-book.pdf', self.registration.scope).pathname,
+  new URL('./books/mini-book-assets/csdm-map.json', self.registration.scope).pathname,
+  new URL('./books/mini-book-assets/servicenow/unified-ea-service-map.png', self.registration.scope).pathname,
+  new URL('./servicenow-offline/assets/service-mapping-goodday-household-map-fit.png', self.registration.scope).pathname
 ]);
 self.addEventListener('install', function (event) {
   event.waitUntil(caches.open(CACHE_NAME).then(function (cache) { return cache.addAll(SHELL); }).then(function () { return self.skipWaiting(); }));
