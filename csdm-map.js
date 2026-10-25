@@ -791,17 +791,26 @@
     const horizontalTarget = dx >= 0 ? 'left' : 'right';
     const verticalSource = dy >= 0 ? 'bottom' : 'top';
     const verticalTarget = dy >= 0 ? 'top' : 'bottom';
+    const preferDownwardPorts = dy > Math.min(source.position.h, target.position.h) * .5;
+    const preferredSourceSide = preferDownwardPorts ? 'bottom' : null;
+    const preferredTargetSide = preferDownwardPorts ? 'top' : null;
     const sourceSides = [horizontalSource, verticalSource];
     const targetSides = [horizontalTarget, verticalTarget];
     const candidates = [];
+    function addCandidate(sourceSide, targetSide, points) {
+      const portPenalty = preferDownwardPorts
+        ? (sourceSide === preferredSourceSide ? 0 : 240) + (targetSide === preferredTargetSide ? 0 : 240)
+        : 0;
+      candidates.push({ points: simplifyPath(points), portPenalty: portPenalty });
+    }
     sourceSides.forEach(function (sourceSide) {
       targetSides.forEach(function (targetSide) {
         const sourcePort = borderPoint(source.position, sourceSide);
         const sourceOutside = outsidePoint(source.position, sourceSide);
         const targetPort = borderPoint(target.position, targetSide);
         const targetOutside = outsidePoint(target.position, targetSide);
-        candidates.push(simplifyPath([sourcePort, sourceOutside, { x: targetOutside.x, y: sourceOutside.y }, targetOutside, targetPort]));
-        candidates.push(simplifyPath([sourcePort, sourceOutside, { x: sourceOutside.x, y: targetOutside.y }, targetOutside, targetPort]));
+        addCandidate(sourceSide, targetSide, [sourcePort, sourceOutside, { x: targetOutside.x, y: sourceOutside.y }, targetOutside, targetPort]);
+        addCandidate(sourceSide, targetSide, [sourcePort, sourceOutside, { x: sourceOutside.x, y: targetOutside.y }, targetOutside, targetPort]);
       });
     });
     const minY = Math.min(source.position.y, target.position.y), maxY = Math.max(source.position.y, target.position.y);
@@ -812,17 +821,20 @@
       targetSides.forEach(function (targetSide) {
         const sourcePort = borderPoint(source.position, sourceSide), sourceOutside = outsidePoint(source.position, sourceSide);
         const targetPort = borderPoint(target.position, targetSide), targetOutside = outsidePoint(target.position, targetSide);
-        railsY.forEach(function (y) { candidates.push(simplifyPath([sourcePort, sourceOutside, { x: sourceOutside.x, y: y }, { x: targetOutside.x, y: y }, targetOutside, targetPort])); });
-        railsX.forEach(function (x) { candidates.push(simplifyPath([sourcePort, sourceOutside, { x: x, y: sourceOutside.y }, { x: x, y: targetOutside.y }, targetOutside, targetPort])); });
+        railsY.forEach(function (y) { addCandidate(sourceSide, targetSide, [sourcePort, sourceOutside, { x: sourceOutside.x, y: y }, { x: targetOutside.x, y: y }, targetOutside, targetPort]); });
+        railsX.forEach(function (x) { addCandidate(sourceSide, targetSide, [sourcePort, sourceOutside, { x: x, y: sourceOutside.y }, { x: x, y: targetOutside.y }, targetOutside, targetPort]); });
       });
     });
     let best = null, bestScore = Infinity;
-    candidates.forEach(function (points) {
+    candidates.forEach(function (candidate) {
+      const points = candidate.points;
       const blocked = pathBlockCount(points, obstacles);
-      const score = pathCost(points) + blocked * 100000;
+      const score = pathCost(points) + candidate.portPenalty + blocked * 100000;
       if (score < bestScore) { best = points; bestScore = score; }
     });
-    best = best || [borderPoint(source.position, horizontalSource), outsidePoint(source.position, horizontalSource), outsidePoint(target.position, horizontalTarget), borderPoint(target.position, horizontalTarget)];
+    const fallbackSourceSide = preferredSourceSide || horizontalSource;
+    const fallbackTargetSide = preferredTargetSide || horizontalTarget;
+    best = best || [borderPoint(source.position, fallbackSourceSide), outsidePoint(source.position, fallbackSourceSide), outsidePoint(target.position, fallbackTargetSide), borderPoint(target.position, fallbackTargetSide)];
     let d = 'M ' + best[0].x + ' ' + best[0].y;
     for (let i = 1; i < best.length; i += 1) d += ' L ' + best[i].x + ' ' + best[i].y;
     const midpoint = pathMidpoint(best);
