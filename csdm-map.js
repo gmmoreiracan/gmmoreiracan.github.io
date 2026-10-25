@@ -798,10 +798,10 @@
     const targetSides = [horizontalTarget, verticalTarget];
     const candidates = [];
     function addCandidate(sourceSide, targetSide, points) {
-      const portPenalty = preferDownwardPorts
-        ? (sourceSide === preferredSourceSide ? 0 : 240) + (targetSide === preferredTargetSide ? 0 : 240)
-        : 0;
-      candidates.push({ points: simplifyPath(points), portPenalty: portPenalty });
+      const preferred = !preferDownwardPorts ||
+        (sourceSide === preferredSourceSide && targetSide === preferredTargetSide);
+      candidates.push({ points: simplifyPath(points), preferred: preferred,
+        portPenalty: preferDownwardPorts && !preferred ? 240 : 0 });
     }
     sourceSides.forEach(function (sourceSide) {
       targetSides.forEach(function (targetSide) {
@@ -825,12 +825,17 @@
         railsX.forEach(function (x) { addCandidate(sourceSide, targetSide, [sourcePort, sourceOutside, { x: x, y: sourceOutside.y }, { x: x, y: targetOutside.y }, targetOutside, targetPort]); });
       });
     });
+    const scoredCandidates = candidates.map(function (candidate) {
+      const blocked = pathBlockCount(candidate.points, obstacles);
+      return { points: candidate.points, preferred: candidate.preferred, blocked: blocked,
+        score: pathCost(candidate.points) + candidate.portPenalty + blocked * 100000 };
+    });
+    const clearPreferred = preferDownwardPorts
+      ? scoredCandidates.filter(function (candidate) { return candidate.preferred && candidate.blocked === 0; })
+      : [];
     let best = null, bestScore = Infinity;
-    candidates.forEach(function (candidate) {
-      const points = candidate.points;
-      const blocked = pathBlockCount(points, obstacles);
-      const score = pathCost(points) + candidate.portPenalty + blocked * 100000;
-      if (score < bestScore) { best = points; bestScore = score; }
+    (clearPreferred.length ? clearPreferred : scoredCandidates).forEach(function (candidate) {
+      if (candidate.score < bestScore) { best = candidate.points; bestScore = candidate.score; }
     });
     const fallbackSourceSide = preferredSourceSide || horizontalSource;
     const fallbackTargetSide = preferredTargetSide || horizontalTarget;
